@@ -26,7 +26,7 @@ function chooseEvent() {
 	function showMessage(msg) {
 		// 新增一個訊息節點，並確保只保留最新20條
 		const node = document.createElement('div');
-		node.textContent = msg;
+		node.innerHTML = msg; // 使用 innerHTML 以支援 HTML 標籤（如顏色）
 		output.appendChild(node);
 		// 若超過20則，移除最舊的
 		while (output.children.length > 20) {
@@ -248,7 +248,11 @@ function genEnemyName(type) {
 				if (it.skill_power) parts.push(`技能+${it.skill_power}%`);
 				if (it.dodge_rate) parts.push(`閃避+${it.dodge_rate}%`);
 				const attr = parts.length ? ` (${parts.join(' ')})` : '';
-				return `${it.name}${attr}`;
+				// 根據稀有度設定顏色
+				let color = '#333'; // 普通 common
+				if (it.rarity === 'rare') color = '#2ecc71'; // 精良 綠色
+				else if (it.rarity === 'epic') color = '#9b59b6'; // 史詩 紫色
+				return `<span style="color: ${color}; font-weight: bold;">${it.name}</span>${attr}`;
 			};
 			const panel = document.getElementById('equipment-panel');
 			const content = document.getElementById('equip-content');
@@ -456,7 +460,13 @@ function genEnemyName(type) {
 			this.map_steps += 1;
 			showMessage(`你往${direction}走。 已移動 ${this.map_steps}/${this.map_goal} 步。`);
 		}			// 選擇地圖事件並處理
-			const event = this.inPyramid ? this.choosePyramidEvent() : chooseEvent();
+			let event = this.inPyramid ? this.choosePyramidEvent() : chooseEvent();
+			// 金字塔副本在前10步不出現
+			if (!this.inPyramid && this.map_steps <= 10 && event === 'pyramid') {
+				event = chooseEvent(); // 重新選擇
+				// 如果還是金字塔，再選一次
+				if (event === 'pyramid') event = 'monster';
+			}
 			showMessage(`遇到事件：${event}`);
 			this.handleEvent(event);
 			
@@ -824,7 +834,7 @@ function genEnemyName(type) {
 			else if (rr < 40) rarity = 'rare';
 			const newItem = Object.assign({}, item, { rarity });
 			this.player.inventory.push(newItem);
-			showMessage(`⚔️ 你在遺體旁找到了 ${newItem.name} (${rarity})！`);
+			showMessage(`⚔️ 你在遺體旁找到了 ${this.formatItem(newItem)}！`);
 			showMessage('（已加入背包）');
 		} else if (result.type === 'gold_and_item') {
 			const gold = 50 + Math.floor(Math.random() * 100);
@@ -1167,7 +1177,7 @@ function genEnemyName(type) {
 			else if (rarityRoll < 0.45) rarity = 'rare';
 			const newItem = Object.assign({}, item, { rarity });
 			this.player.inventory.push(newItem);
-			showMessage(`⚱️ 你在遺跡中找到了古代神器 ${newItem.name} (${rarity})！`);
+			showMessage(`⚱️ 你在遺跡中找到了古代神器 ${this.formatItem(newItem)}！`);
 		} else if (result.type === 'inscription') {
 			const xp = 40 + Math.floor(Math.random() * 60);
 			this.addXP(xp);
@@ -1227,7 +1237,7 @@ function genEnemyName(type) {
 				const item = ITEMS[Math.floor(Math.random() * ITEMS.length)];
 				const newItem = Object.assign({}, item, { rarity: 'rare' });
 				this.player.inventory.push(newItem);
-				showMessage(`✨ 陌生人贈送你 ${newItem.name} (rare)後化作煙霧消失了！`);
+				showMessage(`✨ 陌生人贈送你 ${this.formatItem(newItem)}後化作煙霧消失了！`);
 			}
 		} else if (result.type === 'prophecy') {
 			showMessage('🔮 陌生人預言了你的未來...');
@@ -1792,7 +1802,7 @@ function genEnemyName(type) {
 									const baseItem = candidateItems[Math.floor(Math.random() * candidateItems.length)];
 									dropped = cloneItem(baseItem, targetRarity);
 									this.player.inventory.push(dropped);
-									showMessage(`  ✨ 獲得 ${dropped.name} (${dropped.rarity})`);
+									showMessage(`  ✨ 獲得 ${this.formatItem(dropped)}`);
 								}
 							}
 						} else {
@@ -1817,7 +1827,7 @@ function genEnemyName(type) {
 									const baseItem = ITEMS[Math.floor(Math.random() * ITEMS.length)];
 									dropped = cloneItem(baseItem, rarity);
 									this.player.inventory.push(dropped);
-									showMessage(`  獲得 ${dropped.name} (${rarity})`);
+									showMessage(`  獲得 ${this.formatItem(dropped)}`);
 								}
 							} else if (enemyTypeMultiplier === 2) { // elite
 								dropChance = 85; // 85%掉落
@@ -1836,7 +1846,7 @@ function genEnemyName(type) {
 										const baseItem = ITEMS[Math.floor(Math.random() * ITEMS.length)];
 										dropped = cloneItem(baseItem, rarity);
 										this.player.inventory.push(dropped);
-										showMessage(`  獲得 ${dropped.name} (${rarity})`);
+										showMessage(`  獲得 ${this.formatItem(dropped)}`);
 									}
 								}
 							} else {
@@ -1854,7 +1864,7 @@ function genEnemyName(type) {
 									const baseItem = ITEMS[Math.floor(Math.random()*ITEMS.length)];
 									dropped = cloneItem(baseItem, rarity);
 									this.player.inventory.push(dropped);
-									showMessage(`敵人掉落：${dropped.name}（${dropped.rarity}）`);
+									showMessage(`敵人掉落：${this.formatItem(dropped)}`);
 								}
 							}
 						}
@@ -2584,7 +2594,7 @@ function startAutoSpinLoop() {
 		const rarity = rarities[Math.floor(Math.random() * rarities.length)];
 		const newItem = Object.assign({}, item, { rarity });
 		game.player.inventory.push(newItem);
-		showMessage(`🛠️ Debug: 獲得 ${newItem.name} (${rarity})`);
+		showMessage(`🛠️ Debug: 獲得 ${game.formatItem(newItem)}`);
 	});
 
 	document.getElementById('debug-start-battle').addEventListener('click', () => {
