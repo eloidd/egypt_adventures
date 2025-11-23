@@ -1877,21 +1877,30 @@ function genEnemyName(type) {
 								}
 							}
 						}
+						// 戰鬥結束處理
+						// 先停止自動旋轉，清除所有 timeout
+						try { stopAutoSpinLoop(); } catch(e) {}
+						
+						// 設置戰鬥狀態為 false
 						this.inBattle = false;
-						// 戰鬥結束後，停用旋轉按鈕並允許移動按鈕
+						
+						// 禁用戰鬥相關按鈕
 						spinBtn.disabled = true;
 						stopBtn.disabled = true;
-						// 停止自動旋轉並禁用自動旋轉按鈕
-						try { stopAutoSpinLoop(); } catch(e) {}
+						
+						// 禁用並重置自動旋轉按鈕
 						const autoBtn = document.getElementById('auto-spin-btn'); 
 						if (autoBtn) {
 							autoBtn.disabled = true;
 							autoBtn.textContent = '自動旋轉'; // 確保文字重置
 							autoBtn.style.background = ''; // 重置背景色
 						}
+						
+						// 啟用移動按鈕
 						const mf = document.getElementById('move-front'); if (mf) mf.disabled = false;
 						const ml = document.getElementById('move-left'); if (ml) ml.disabled = false;
 						const mr = document.getElementById('move-right'); if (mr) mr.disabled = false;
+						
 						this.enemy.turnsToAttack = 3;
 					}
 				}
@@ -1956,8 +1965,8 @@ function runAutoCycle() {
 		autoSpinTimer = setTimeout(runAutoCycle, 300);
 		return;
 	}
-	if (!spinBtn.disabled) {
-		// 開始一次手動點擊流程
+	if (!spinBtn.disabled && game.inBattle) {
+		// 開始一次手動點擊流程（再次確認戰鬥狀態）
 		spinBtn.click();
 		const delay = 800 + Math.floor(Math.random()*600);
 		autoSpinTimer = setTimeout(()=>{
@@ -1966,7 +1975,8 @@ function runAutoCycle() {
 				stopAutoSpinLoop();
 				return;
 			}
-			if (!stopBtn.disabled) stopBtn.click();
+			// 確保還在戰鬥中才點擊停止
+			if (!stopBtn.disabled && game.inBattle) stopBtn.click();
 			// schedule next cycle after slight pause to allow results
 			autoSpinTimer2 = setTimeout(()=>{
 				// 第三次檢查
@@ -1978,8 +1988,13 @@ function runAutoCycle() {
 			}, 400);
 		}, delay);
 	} else {
-		// 無法旋轉時稍後重試
-		autoSpinTimer = setTimeout(runAutoCycle, 500);
+		// 無法旋轉或不在戰鬥中，停止自動旋轉
+		if (!game.inBattle) {
+			stopAutoSpinLoop();
+		} else {
+			// 稍後重試
+			autoSpinTimer = setTimeout(runAutoCycle, 500);
+		}
 	}
 }
 
