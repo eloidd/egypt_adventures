@@ -2064,40 +2064,48 @@ function startAutoSpinLoop() {
 					const targetIdx = SYMBOLS.indexOf(targetSymbol);
 					const symbolIndex = targetIdx >= 0 ? targetIdx : 0;
 					
-					// 計算當前位置並找到最近的符號循環位置
-					let currentPos = reelState[index].anim ? reelState[index].anim.pos : 0;
+					// 使用固定的循環位置（第2個循環），確保符號在可視範圍內
 					const repeats = 8;
-					const totalHeight = SYMBOLS.length * SYMBOL_HEIGHT * repeats;
 					const singleBlock = SYMBOLS.length * SYMBOL_HEIGHT;
-					const baseCycle = Math.floor(currentPos / singleBlock);
+					const baseCycle = 2; // 固定使用第2個循環
 					
-					// 目標位置：在當前循環中的符號位置
-					const finalPos = (baseCycle * singleBlock + symbolIndex * SYMBOL_HEIGHT + 30) % totalHeight;
+					// 目標位置：符號頂部對齊到高亮框位置（30px）
+					const finalPos = baseCycle * singleBlock + symbolIndex * SYMBOL_HEIGHT + 30;
 					
 					strip.style.transition = 'transform 0.15s ease-out';
 					strip.style.transform = `translateY(-${finalPos}px)`;
 					
 					// 等待動畫完成後讀取實際顯示的符號
 					setTimeout(() => {
+						strip.style.transition = '';
+						
+						// 從畫面讀取實際顯示的符號
 						try {
 							const rect = reels[index].getBoundingClientRect();
 							const cx = rect.left + rect.width / 2;
 							const cy = rect.top + rect.height / 2;
 							let el = document.elementFromPoint(cx, cy);
-							while (el && !el.classList.contains('symbol')) {
+							let attempts = 0;
+							while (el && !el.classList.contains('symbol') && attempts < 10) {
 								el = el.parentElement;
+								attempts++;
 							}
-							const landedSymbol = el ? el.textContent.trim() : targetSymbol;
-							if (landedSymbol && SYMBOLS.includes(landedSymbol)) {
-								results[index] = landedSymbol;
+							if (el && el.classList.contains('symbol')) {
+								const landedSymbol = el.textContent.trim();
+								if (landedSymbol && SYMBOLS.includes(landedSymbol)) {
+									results[index] = landedSymbol;
+								} else {
+									results[index] = targetSymbol;
+								}
 							} else {
 								results[index] = targetSymbol;
 							}
 						} catch (e) {
+							console.error('Error reading symbol:', e);
 							results[index] = targetSymbol;
 						}
 						resolve();
-					}, 200);
+					}, 250);
 				});
 			};
 			
