@@ -512,14 +512,12 @@ function genEnemyName(type) {
 			if (playerStatusEl) {
 				// 計算 combo 顯示文字（若在戰鬥中）
 				let comboText = '無';
-				if (this.inBattle) {
-					const sym = this.consecutivePrimarySymbol || '-';
-					const count = this.consecutivePrimaryCount || 0;
-					const mult = (1 + 0.12 * Math.max(0, count - 1)).toFixed(2);
-					comboText = `${sym} x${count} (x${mult})`;
-				}
-
-				const playerPct = Math.max(0, Math.min(100, Math.floor((this.player.hp / this.player.max_hp) * 100)));
+			if (this.inBattle) {
+				const sym = this.consecutivePrimarySymbol || '-';
+				const count = this.consecutivePrimaryCount || 0;
+				const mult = Math.max(1, count);
+				comboText = `${sym} x${count} (x${mult})`;
+			}				const playerPct = Math.max(0, Math.min(100, Math.floor((this.player.hp / this.player.max_hp) * 100)));
 				
 				// 計算經驗值進度
 				const xpNeeded = this.xpForNext(this.player.level);
@@ -1038,8 +1036,8 @@ function genEnemyName(type) {
 		enemyAutoAttack() {
 			// 計算基本攻擊並降低基礎傷害（較適合新手）
 			const raw = this.enemy.baseAttack; // baseAttack 已依難度調整
-			// 若玩家連續相同符號次數較多，敵人會略微提升回擊（風險），但幅度較小
-			const extra = Math.max(0, this.consecutivePrimaryCount - 1) * 0.12; // 每連擊加12%回擊
+			// 若玩家連續相同符號次數較多，敵人會略微提升回擊（風險），調整為線性倍率
+			const extra = Math.max(0, this.consecutivePrimaryCount - 1) * 0.3; // 每連擊加30%回擊
 			let dmg = Math.floor(raw * (1 + extra));
 			// 玩家有閃避機會（由幸運值和護甲提供被動閃避）
 			const armorDodge = this.player.equipment.armor ? (this.player.equipment.armor.dodge_rate || 0) : 0;
@@ -2036,8 +2034,8 @@ function genEnemyName(type) {
 			// 若上一回合主符號與本回合相同，previousCombo 為先前計數，effectiveCombo = previousCombo + 1
 			const previousCombo = (this.inBattle && this.consecutivePrimarySymbol === primary) ? this.consecutivePrimaryCount : 0;
 			const effectiveCombo = previousCombo + 1; // 包含當前這一回合
-			// 每多一層 combo (effectiveCombo-1) 增加 12% 效果（可調）
-			const comboMultiplier = 1 + 0.12 * (effectiveCombo - 1);
+			// Combo 效果改為線性倍率：2次x2，3次x3，4次x4
+			const comboMultiplier = effectiveCombo;
 			// 簡短提示主要符號、匹配數與當前 combo
 			const bonusMsg = matchCount === 3 ? '【三連加成 x2.5】' : '';
 			showMessage(`主要符號：${primary}，匹配數：${matchCount}${bonusMsg}，連續 x${effectiveCombo}（乘數 x${comboMultiplier.toFixed(2)}）`);
