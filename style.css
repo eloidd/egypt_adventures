@@ -572,6 +572,7 @@ body::after {
     border-right: 5px solid #654321;
     position: relative;
     z-index: 5;
+    overflow: hidden;
 }
 
 /* 象形文字裝飾角 - 超清晰版 */
@@ -611,18 +612,18 @@ body::after {
     z-index: 6;
 }
 
-/* 角色資訊下方 - 前三個守護神祇 */
+/* 角色資訊下方 - 守護神祇（1.jpg） */
 #player-status::after {
     content: '';
     position: absolute;
     bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 140px;
-    height: 70px;
-    background: url('licensed-image.jpg') no-repeat;
-    background-size: 520px auto;
-    background-position: 10px center;
+    width: 150px;
+    height: 65px;
+    background: url('1.jpg') no-repeat;
+    background-size: 175px auto;
+    background-position: center center;
     opacity: 0.8;
     z-index: -1;
     pointer-events: none;
@@ -630,18 +631,18 @@ body::after {
     filter: contrast(1.1) brightness(1.05);
 }
 
-/* 敵人資訊下方 - 後三個戰神/死神 */
+/* 敵人資訊下方 - 戰神/死神（2.jpg） */
 #enemy-status::after {
     content: '';
     position: absolute;
     bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 140px;
-    height: 70px;
-    background: url('licensed-image.jpg') no-repeat;
-    background-size: 520px auto;
-    background-position: -270px center;
+    width: 150px;
+    height: 65px;
+    background: url('2.jpg') no-repeat;
+    background-size: 175px auto;
+    background-position: center center;
     opacity: 0.8;
     z-index: -1;
     pointer-events: none;
