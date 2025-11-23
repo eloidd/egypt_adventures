@@ -1572,6 +1572,10 @@ function genEnemyName(type) {
 		}
 
 		applySlotResults(results) {
+			// 檢查戰鬥是否已結束，如果已結束則不處理結果
+			if (!this.inBattle) {
+				return;
+			}
 			// 以左邊第一格（results[0]）為主要符號，只計算從左邊開始的連續相同符號數
 			const primary = results[0];
 			let matchCount = 1; // 至少有第一格
