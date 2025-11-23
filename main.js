@@ -290,7 +290,7 @@ function genEnemyName(type) {
 				this.player.max_stamina += 5;
 				this.player.hp = this.player.max_hp; // 完全恢復血量
 				this.player.stamina = this.player.max_stamina; // 完全恢復體力
-				showMessage(`升級！你現在等級 ${this.player.level} (HP/體力完全恢復)`);
+				showMessage(`${t('levelUp')} ${this.player.level} ${t('hpStaminaRecovered')}`);
 			}
 		}
 
@@ -523,25 +523,25 @@ function genEnemyName(type) {
 				}
 				
 				playerStatusEl.innerHTML = `
-					<div class="stat-label">玩家 Lv.${this.player.level}</div>
-					<div class="hp-row">HP: <span class="hp-text">${this.player.hp}/${this.player.max_hp}</span></div>
+					<div class="stat-label">${currentLanguage === 'zh-TW' ? '玩家' : currentLanguage === 'fr' ? 'Joueur' : 'Player'} Lv.${this.player.level}</div>
+					<div class="hp-row">${t('hp')}: <span class="hp-text">${this.player.hp}/${this.player.max_hp}</span></div>
 					<div class="hp-bar"><div class="hp-inner" style="width:${playerPct}%"></div></div>
-					<div class="xp-row">經驗: <span class="xp-text">${this.player.xp}/${xpNeeded === Infinity ? 'MAX' : xpNeeded}</span></div>
+					<div class="xp-row">${currentLanguage === 'zh-TW' ? '經驗' : currentLanguage === 'fr' ? 'XP' : 'XP'}: <span class="xp-text">${this.player.xp}/${xpNeeded === Infinity ? 'MAX' : xpNeeded}</span></div>
 					<div class="xp-bar"><div class="xp-inner" style="width:${xpPct}%"></div></div>
                     <div class="stats-row">
-                    	<div>體力: ${this.player.stamina}/${this.player.max_stamina}</div>
-                    	<div>護盾: ${this.player.shield}</div>
-                    	<div>藥水: ${this.player.potions}</div>
-                    	<div>金幣: ${this.player.gold}</div>
-                    	<div>幸運(戰): ${this.player.luck_combat}</div>
-                    	<div>幸運(金): ${this.player.luck_gold}</div>
+                    	<div>${t('stamina')}: ${this.player.stamina}/${this.player.max_stamina}</div>
+                    	<div>${currentLanguage === 'zh-TW' ? '護盾' : currentLanguage === 'fr' ? 'Bouclier' : 'Shield'}: ${this.player.shield}</div>
+                    	<div>${currentLanguage === 'zh-TW' ? '藥水' : currentLanguage === 'fr' ? 'Potions' : 'Potions'}: ${this.player.potions}</div>
+                    	<div>${currentLanguage === 'zh-TW' ? '金幣' : currentLanguage === 'fr' ? 'Or' : 'Gold'}: ${this.player.gold}</div>
+                    	<div>${currentLanguage === 'zh-TW' ? '幸運(戰)' : currentLanguage === 'fr' ? 'Chance(C)' : 'Luck(C)'}: ${this.player.luck_combat}</div>
+                    	<div>${currentLanguage === 'zh-TW' ? '幸運(金)' : currentLanguage === 'fr' ? 'Chance(O)' : 'Luck(G)'}: ${this.player.luck_gold}</div>
                 	</div>
 					${setBonusHtml}
 					<div class="combo-row ${ (this.inBattle && (this.consecutivePrimaryCount||0) > 1) ? 'combo-active' : '' }">Combo: ${comboText}</div>
 					<div class="equip-row">
-						<div>武器: ${this.player.equipment.weapon ? this.formatItem(this.player.equipment.weapon) : '無'} <button class="open-equip-btn" data-slot="weapon">裝備</button> <button class="unequip-btn" data-slot="weapon">卸下</button></div>
-						<div>防具: ${this.player.equipment.armor ? this.formatItem(this.player.equipment.armor) : '無'} <button class="open-equip-btn" data-slot="armor">裝備</button> <button class="unequip-btn" data-slot="armor">卸下</button></div>
-						<div>護符: ${this.player.equipment.amulet ? this.formatItem(this.player.equipment.amulet) : '無'} <button class="open-equip-btn" data-slot="amulet">裝備</button> <button class="unequip-btn" data-slot="amulet">卸下</button></div>
+						<div>${currentLanguage === 'zh-TW' ? '武器' : currentLanguage === 'fr' ? 'Arme' : 'Weapon'}: ${this.player.equipment.weapon ? this.formatItem(this.player.equipment.weapon) : (currentLanguage === 'zh-TW' ? '無' : currentLanguage === 'fr' ? 'Aucun' : 'None')} <button class="open-equip-btn" data-slot="weapon">${currentLanguage === 'zh-TW' ? '裝備' : currentLanguage === 'fr' ? 'Équiper' : 'Equip'}</button> <button class="unequip-btn" data-slot="weapon">${currentLanguage === 'zh-TW' ? '卸下' : currentLanguage === 'fr' ? 'Enlever' : 'Unequip'}</button></div>
+						<div>${currentLanguage === 'zh-TW' ? '防具' : currentLanguage === 'fr' ? 'Armure' : 'Armor'}: ${this.player.equipment.armor ? this.formatItem(this.player.equipment.armor) : (currentLanguage === 'zh-TW' ? '無' : currentLanguage === 'fr' ? 'Aucun' : 'None')} <button class="open-equip-btn" data-slot="armor">${currentLanguage === 'zh-TW' ? '裝備' : currentLanguage === 'fr' ? 'Équiper' : 'Equip'}</button> <button class="unequip-btn" data-slot="armor">${currentLanguage === 'zh-TW' ? '卸下' : currentLanguage === 'fr' ? 'Enlever' : 'Unequip'}</button></div>
+						<div>${currentLanguage === 'zh-TW' ? '護符' : currentLanguage === 'fr' ? 'Amulette' : 'Amulet'}: ${this.player.equipment.amulet ? this.formatItem(this.player.equipment.amulet) : (currentLanguage === 'zh-TW' ? '無' : currentLanguage === 'fr' ? 'Aucun' : 'None')} <button class="open-equip-btn" data-slot="amulet">${currentLanguage === 'zh-TW' ? '裝備' : currentLanguage === 'fr' ? 'Équiper' : 'Equip'}</button> <button class="unequip-btn" data-slot="amulet">${currentLanguage === 'zh-TW' ? '卸下' : currentLanguage === 'fr' ? 'Enlever' : 'Unequip'}</button></div>
 					</div>
 				`;
 			}
@@ -549,14 +549,19 @@ function genEnemyName(type) {
 			// 更新敵人狀態到右側面板
 			if (enemyStatusEl) {
 				const enemyPct = this.enemy && this.enemy.max_hp ? Math.max(0, Math.min(100, Math.floor((this.enemy.hp / this.enemy.max_hp) * 100))) : 0;
+				const enemyLabel = currentLanguage === 'zh-TW' ? '敵人' : currentLanguage === 'fr' ? 'Ennemi' : 'Enemy';
+				const noneLabel = currentLanguage === 'zh-TW' ? '無' : currentLanguage === 'fr' ? 'Aucun' : 'None';
+				const attackCountdown = currentLanguage === 'zh-TW' ? '普攻倒數' : currentLanguage === 'fr' ? 'Attaque dans' : 'Attack in';
+				const strength = currentLanguage === 'zh-TW' ? '強度' : currentLanguage === 'fr' ? 'Force' : 'Strength';
+				
 				enemyStatusEl.innerHTML = `
-					<div class="stat-label">敵人</div>
+					<div class="stat-label">${enemyLabel}</div>
 					${this.inBattle ? `
-						<div class="hp-row">${this.enemy.name || '敵人'}  HP: <span class="hp-text">${this.enemy.hp}/${this.enemy.max_hp}</span></div>
+						<div class="hp-row">${this.enemy.name || enemyLabel}  ${t('hp')}: <span class="hp-text">${this.enemy.hp}/${this.enemy.max_hp}</span></div>
 						<div class="hp-bar"><div class="hp-inner enemy-hp" style="width:${enemyPct}%"></div></div>
-						<div class="stats-row"><div>普攻倒數: ${this.enemy.turnsToAttack}</div><div>強度: x${(this.enemy.strength||1).toFixed(2)}</div></div>
+						<div class="stats-row"><div>${attackCountdown}: ${this.enemy.turnsToAttack}</div><div>${strength}: x${(this.enemy.strength||1).toFixed(2)}</div></div>
 					` : `
-						<div class="hp-row">無</div>
+						<div class="hp-row">${noneLabel}</div>
 						<div class="hp-bar"><div class="hp-inner enemy-hp" style="width:0%"></div></div>
 					`}
 				`;
@@ -1159,7 +1164,7 @@ function genEnemyName(type) {
 		}
 
 		oasis() {
-			showMessage('發現綠洲，恢復生命與體力。');
+			showMessage(t('oasisFound'));
 			this.player.hp = Math.min(this.player.max_hp, this.player.hp + 20);
 			this.player.stamina = Math.min(this.player.max_stamina, this.player.stamina + 10);
 		}
@@ -1310,7 +1315,7 @@ function genEnemyName(type) {
 			} else if (blessing.type === 'stamina') {
 				this.player.max_stamina += blessing.value;
 				this.player.stamina = Math.min(this.player.max_stamina, this.player.stamina + blessing.value);
-				showMessage(`✨ 神殿的祝福降臨！最大體力 +${blessing.value}`);
+				showMessage(`${t('shrineBlessing')} +${blessing.value}`);
 			} else if (blessing.type === 'luck_combat') {
 				this.player.luck_combat += blessing.value;
 				showMessage(`✨ 神殿的祝福降臨！戰鬥幸運 +${blessing.value}`);
@@ -1367,7 +1372,7 @@ function genEnemyName(type) {
 					this.player.gold -= 60;
 					this.player.hp = this.player.max_hp;
 					this.player.stamina = this.player.max_stamina;
-					showMessage('🍖 你向商隊購買了食物和休息（花費60金幣），HP和體力完全恢復！');
+					showMessage(t('caravanBuyFood'));
 				}
 			} else {
 				showMessage('商隊願意交易，但你的金幣不足（需要60金幣）。');
@@ -1389,7 +1394,7 @@ function genEnemyName(type) {
 			} else if (gift.type === 'food') {
 				this.player.hp = Math.min(this.player.max_hp, this.player.hp + gift.hp);
 				this.player.stamina = Math.min(this.player.max_stamina, this.player.stamina + gift.stamina);
-				showMessage(`🍞 商隊分享了食物和水，HP +${gift.hp}，體力 +${gift.stamina}`);
+				showMessage(`${t('caravanGift')} +${gift.hp}, ${t('stamina')} +${gift.stamina}`);
 			}
 		} else if (result.type === 'info') {
 			const xp = 20 + Math.floor(Math.random() * 30);
@@ -1402,7 +1407,7 @@ function genEnemyName(type) {
 	}
 
 	mirage() {
-		showMessage('💫 你看到了遠處的幻象...');
+		showMessage(t('mirageAppear'));
 		const outcomes = [
 			{ type: 'oasis_real', weight: 25 },
 			{ type: 'hallucination', weight: 40 },
@@ -1418,27 +1423,27 @@ function genEnemyName(type) {
 		}
 
 		if (result.type === 'oasis_real') {
-			showMessage('🌴 幻象是真的！你找到了一處隱藏的綠洲！');
+			showMessage(t('mirageReal'));
 			this.player.hp = this.player.max_hp;
 			this.player.stamina = this.player.max_stamina;
 			const gold = 30 + Math.floor(Math.random() * 50);
 			this.player.gold += gold;
-			showMessage(`完全恢復HP和體力，並且找到 ${gold} 金幣！`);
+			showMessage(`${t('mirageRecovery')} ${gold} ${t('goldCoins')}`);
 		} else if (result.type === 'hallucination') {
-			showMessage('😵 那只是海市蜃樓...你追逐幻象消耗了體力。');
+			showMessage(t('mirageHallucination'));
 			const staminaLoss = 10 + Math.floor(Math.random() * 10);
 			this.player.stamina = Math.max(0, this.player.stamina - staminaLoss);
-			showMessage(`體力 -${staminaLoss}`);
+			showMessage(`${t('staminaLoss')} -${staminaLoss}`);
 		} else if (result.type === 'treasure_real') {
-			showMessage('✨ 幻象指引你找到了真正的寶藏！');
+			showMessage(t('mirageTreasure'));
 			const gold = 80 + Math.floor(Math.random() * 120);
 			this.player.gold += gold;
-			showMessage(`獲得 ${gold} 金幣！`);
+			showMessage(`${t('obtained')} ${gold} ${t('goldCoins')}`);
 		} else {
-			showMessage('⚠️ 幻象引導你走入危險區域！');
+			showMessage(t('mirageDanger'));
 			const damage = 15 + Math.floor(Math.random() * 15);
 			this.player.hp = Math.max(1, this.player.hp - damage);
-			showMessage(`受到傷害 -${damage} HP`);
+			showMessage(`${t('damageTaken')} -${damage} ${t('hp')}`);
 		}
 	}
 
@@ -1502,12 +1507,12 @@ function genEnemyName(type) {
 			this.player.stamina = Math.max(0, this.player.stamina - staminaLoss);
 			showMessage(`消耗體力 -${staminaLoss}`);
 		} else if (result.type === 'struggle') {
-			showMessage('😰 你在流沙中掙扎，消耗了大量體力和生命。');
+			showMessage(t('quicksandStruggle'));
 			const hpLoss = 10 + Math.floor(Math.random() * 15);
 			const staminaLoss = 15 + Math.floor(Math.random() * 15);
 			this.player.hp = Math.max(1, this.player.hp - hpLoss);
 			this.player.stamina = Math.max(0, this.player.stamina - staminaLoss);
-			showMessage(`HP -${hpLoss}，體力 -${staminaLoss}`);
+			showMessage(`${t('hp')} -${hpLoss}, ${t('stamina')} -${staminaLoss}`);
 		} else {
 			showMessage('💀 你陷入流沙深處，幾乎要窒息！');
 			const hpLoss = 25 + Math.floor(Math.random() * 25);
