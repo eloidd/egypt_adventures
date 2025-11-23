@@ -61,14 +61,93 @@ function chooseEvent() {
 	const VISIBLE = 2; // 中間顯示1個，實作上每個 symbol 高度為 60px，reel 高度 120px
 	const SYMBOL_HEIGHT = 60; // 與 CSS 同步
 
-// 裝備與掉落樣本
+// 裝備與掉落樣本（基礎屬性，品質會在生成時添加）
 const ITEMS = [
+	// 武器類
 	{ name: '青銅劍', slot: 'weapon', atk: 3, rarity: 'common' },
-	{ name: '鋼鐵劍', slot: 'weapon', atk: 6, rarity: 'rare' },
+	{ name: '鋼鐵劍', slot: 'weapon', atk: 6, rarity: 'common' },
+	{ name: '法老彎刀', slot: 'weapon', atk: 8, rarity: 'common' },
+	{ name: '聖甲蟲戰斧', slot: 'weapon', atk: 10, rarity: 'common' },
+	{ name: '荷魯斯之劍', slot: 'weapon', atk: 12, rarity: 'common' },
+	{ name: '阿努比斯之鎌', slot: 'weapon', atk: 15, rarity: 'common' },
+	{ name: '太陽神之矛', slot: 'weapon', atk: 18, rarity: 'common' },
+	
+	// 防具類
 	{ name: '皮甲', slot: 'armor', def: 2, rarity: 'common' },
-	{ name: '鋼鐵鎧甲', slot: 'armor', def: 5, rarity: 'rare' },
-	{ name: '幸運護符', slot: 'amulet', luck_gold: 1, rarity: 'rare' }
+	{ name: '鋼鐵鎧甲', slot: 'armor', def: 5, rarity: 'common' },
+	{ name: '沙漠長袍', slot: 'armor', def: 3, rarity: 'common' },
+	{ name: '法老護胸', slot: 'armor', def: 7, rarity: 'common' },
+	{ name: '聖甲蟲鎧甲', slot: 'armor', def: 9, rarity: 'common' },
+	{ name: '黃金戰甲', slot: 'armor', def: 12, rarity: 'common' },
+	{ name: '神殿守護甲', slot: 'armor', def: 15, rarity: 'common' },
+	
+	// 護符類
+	{ name: '幸運護符', slot: 'amulet', luck_gold: 1, rarity: 'common' },
+	{ name: '戰鬥護符', slot: 'amulet', luck_combat: 1, rarity: 'common' },
+	{ name: '聖甲蟲墜飾', slot: 'amulet', luck_gold: 2, rarity: 'common' },
+	{ name: '荷魯斯之眼', slot: 'amulet', luck_combat: 2, rarity: 'common' },
+	{ name: '生命之符', slot: 'amulet', max_hp_bonus: 20, rarity: 'common' },
+	{ name: '力量之符', slot: 'amulet', atk: 3, rarity: 'common' },
+	{ name: '守護之符', slot: 'amulet', def: 3, rarity: 'common' }
 ];
+
+// 品質額外屬性池
+const QUALITY_BONUS = {
+	weapon: {
+		// 武器額外屬性：暴擊率、連擊率、技能增幅
+		common: [], // 普通無額外屬性
+		rare: [ // 稀有：1個額外屬性
+			{ crit_rate: 5 }, // +5% 暴擊率
+			{ crit_rate: 8 },
+			{ combo_rate: 8 }, // +8% 連擊維持率
+			{ combo_rate: 12 },
+			{ skill_power: 10 }, // +10% 技能傷害
+			{ skill_power: 15 }
+		],
+		epic: [ // 史詩：2個額外屬性
+			{ crit_rate: 10, combo_rate: 15 },
+			{ crit_rate: 12, skill_power: 20 },
+			{ combo_rate: 18, skill_power: 25 },
+			{ crit_rate: 15, combo_rate: 20 },
+			{ skill_power: 30, combo_rate: 15 }
+		]
+	},
+	armor: {
+		common: [],
+		rare: [ // 稀有：1個額外屬性
+			{ max_hp_bonus: 15 }, // +15 最大生命
+			{ max_hp_bonus: 20 },
+			{ stamina_bonus: 10 }, // +10 最大體力
+			{ stamina_bonus: 15 },
+			{ dodge_rate: 5 }, // +5% 閃避率
+			{ dodge_rate: 8 }
+		],
+		epic: [ // 史詩：2個額外屬性
+			{ max_hp_bonus: 30, stamina_bonus: 20 },
+			{ max_hp_bonus: 25, dodge_rate: 10 },
+			{ stamina_bonus: 25, dodge_rate: 12 },
+			{ max_hp_bonus: 40, dodge_rate: 8 },
+			{ dodge_rate: 15, stamina_bonus: 30 }
+		]
+	},
+	amulet: {
+		common: [],
+		rare: [ // 稀有：1個額外屬性
+			{ luck_combat: 1 },
+			{ luck_gold: 1 },
+			{ max_hp_bonus: 15 },
+			{ atk: 2 },
+			{ def: 2 }
+		],
+		epic: [ // 史詩：2個額外屬性
+			{ luck_combat: 2, luck_gold: 2 },
+			{ luck_combat: 2, max_hp_bonus: 25 },
+			{ luck_gold: 2, atk: 4 },
+			{ atk: 5, def: 5 },
+			{ max_hp_bonus: 35, def: 3 }
+		]
+	}
+};
 
 function genEnemyName(type) {
 	const prefixes = ['古夫', '阿努', '賽特', '拉', '梅特'];
@@ -97,10 +176,13 @@ function genEnemyName(type) {
 					strip.appendChild(el);
 				}
 			}
-			reels[r].innerHTML = '';
-			reels[r].appendChild(strip);
-			// 初始位置
-			strip.style.transform = `translateY(-${SYMBOL_HEIGHT * SYMBOLS.length * 2}px)`; // 中間一組
+		reels[r].innerHTML = '';
+		reels[r].appendChild(strip);
+		// 初始位置：從中間組開始
+		// 高亮框在 top: 30px (中心在 60px)，要讓符號對齊，需要讓某個符號的中心對齊到 60px
+		// strip 往上移動到讓第 N 個符號的頂部在 30px 處
+		const initialOffset = SYMBOL_HEIGHT * SYMBOLS.length * 2;
+		strip.style.transform = `translateY(-${initialOffset}px)`;
 		}
 	}
 
@@ -117,6 +199,11 @@ function genEnemyName(type) {
 			this.map_steps = 0;
 			this.map_goal = 30;
 			this.difficulty = 1;
+			// 金字塔副本相關狀態
+			this.inPyramid = false;
+			this.pyramidSteps = 0;
+			this.pyramidMaxSteps = 8;
+			this.normalMapSteps = 0; // 儲存進入金字塔前的步數
 		}
 
 		// 經驗曲線：傳回升到下一等級所需的經驗值（簡單指數增長，可擴展至等級99）
@@ -153,6 +240,13 @@ function genEnemyName(type) {
 				if (it.atk) parts.push(`攻+${it.atk}`);
 				if (it.def) parts.push(`防+${it.def}`);
 				if (it.luck_gold) parts.push(`金運+${it.luck_gold}`);
+				if (it.luck_combat) parts.push(`戰運+${it.luck_combat}`);
+				if (it.max_hp_bonus) parts.push(`HP+${it.max_hp_bonus}`);
+				if (it.stamina_bonus) parts.push(`體力+${it.stamina_bonus}`);
+				if (it.crit_rate) parts.push(`暴擊+${it.crit_rate}%`);
+				if (it.combo_rate) parts.push(`連擊+${it.combo_rate}%`);
+				if (it.skill_power) parts.push(`技能+${it.skill_power}%`);
+				if (it.dodge_rate) parts.push(`閃避+${it.dodge_rate}%`);
 				const attr = parts.length ? ` (${parts.join(' ')})` : '';
 				return `${it.name}${attr}`;
 			};
@@ -298,24 +392,50 @@ function genEnemyName(type) {
 			setTimeout(()=>{
 				Array.from(document.querySelectorAll('.unequip-btn')).forEach(b=>{ b.addEventListener('click', ()=>{ const slot = b.getAttribute('data-slot'); this.unequipItem(slot); }); });
 				Array.from(document.querySelectorAll('.open-equip-btn')).forEach(b=>{ b.addEventListener('click', ()=>{ const slot = b.getAttribute('data-slot'); this.showEquipmentPanel(slot); }); });
-			}, 10);
-			const mapEl = document.getElementById('map-steps');
-			if (mapEl) mapEl.textContent = Math.max(0, this.map_goal - this.map_steps);
+		}, 10);
+		const mapEl = document.getElementById('map-steps');
+		if (mapEl) {
+			if (this.inPyramid) {
+				mapEl.textContent = `🔺 ${this.pyramidSteps}/${this.pyramidMaxSteps}`;
+			} else {
+				mapEl.textContent = Math.max(0, this.map_goal - this.map_steps);
+			}
 		}
-
-		move(direction) {
+	}		moveStep(direction) {
+			if (this.inPyramid) {
+				// 金字塔副本模式
+				this.pyramidSteps += 1;
+				showMessage(`你在金字塔中往${direction}走。🔺 金字塔探險: ${this.pyramidSteps}/${this.pyramidMaxSteps} 步。`);
+		} else {
+			// 正常地圖模式
 			this.map_steps += 1;
 			showMessage(`你往${direction}走。 已移動 ${this.map_steps}/${this.map_goal} 步。`);
-			// 玩家已選擇方向，允許使用旋轉按鈕（若尚未在戰鬥中）
-			spinBtn.disabled = false;
-			// 開放自動旋轉按鈕
-			const autoBtn = document.getElementById('auto-spin-btn'); if (autoBtn) autoBtn.disabled = false;
-			// 選擇地圖事件並處理
-			const event = chooseEvent();
+		}			// 選擇地圖事件並處理
+			const event = this.inPyramid ? this.choosePyramidEvent() : chooseEvent();
 			showMessage(`遇到事件：${event}`);
 			this.handleEvent(event);
-			if (this.map_steps >= this.map_goal) this.nextMap();
+			
+			// 檢查是否完成金字塔或正常地圖
+			if (this.inPyramid && this.pyramidSteps >= this.pyramidMaxSteps) {
+				this.exitPyramid();
+			} else if (!this.inPyramid && this.map_steps >= this.map_goal) {
+				this.nextMap();
+			}
+			
 			this.updateStatus();
+		}
+
+		choosePyramidEvent() {
+			// 金字塔內事件：更高的怪物遭遇率
+			const pyramidEvents = ['monster', 'elite', 'mini_boss', 'oasis', 'empty'];
+			const pyramidWeights = [35, 25, 15, 10, 15]; // 75% 戰鬥率
+			const total = pyramidWeights.reduce((a,b)=>a+b,0);
+			let r = Math.random() * total;
+			for (let i=0,acc=0;i<pyramidWeights.length;i++){
+				acc += pyramidWeights[i];
+				if (r < acc) return pyramidEvents[i];
+			}
+			return 'monster';
 		}
 
 		nextMap() {
@@ -363,27 +483,36 @@ function genEnemyName(type) {
 			const ml = document.getElementById('move-left'); if (ml) ml.disabled = true;
 			const mr = document.getElementById('move-right'); if (mr) mr.disabled = true;
 			// 根據類型調整敵人血量與普攻力
+			let hpMultiplier = this.inPyramid ? 2.0 : 1.0;
+			let atkMultiplier = this.inPyramid ? 1.8 : 1.0;
+			
 			if (type === 'elite') {
-				this.enemy.max_hp = 150 + 20 * this.difficulty;
-				this.enemy.baseAttack = 15 + 5 * this.difficulty;
+				this.enemy.max_hp = Math.floor((150 + 20 * this.difficulty) * hpMultiplier);
+				this.enemy.baseAttack = Math.floor((15 + 5 * this.difficulty) * atkMultiplier);
 			} else if (type === 'mini_boss') {
-				this.enemy.max_hp = 250 + 40 * this.difficulty;
-				this.enemy.baseAttack = 25 + 8 * this.difficulty;
+				this.enemy.max_hp = Math.floor((250 + 40 * this.difficulty) * hpMultiplier);
+				this.enemy.baseAttack = Math.floor((25 + 8 * this.difficulty) * atkMultiplier);
 			} else {
-				this.enemy.max_hp = 100 + 10 * this.difficulty;
-				this.enemy.baseAttack = 10 + 2 * this.difficulty;
+				this.enemy.max_hp = Math.floor((100 + 10 * this.difficulty) * hpMultiplier);
+				this.enemy.baseAttack = Math.floor((10 + 2 * this.difficulty) * atkMultiplier);
+			}
+			
+			if (this.inPyramid) {
+				this.enemy.name += ' (金字塔)';
+				showMessage('⚠️ 金字塔敵人實力強大！');
 			}
 			this.enemy.hp = this.enemy.max_hp;
-			this.enemy.turnsToAttack = 3;
-			this.consecutivePrimarySymbol = null;
-			this.consecutivePrimaryCount = 0;
-			this.updateStatus();
-			// 自動啟動插槽並在短延遲後停止（模擬自動戰鬥）
-			startSpin();
-			setTimeout(()=> stopSequentially(), 900);
-		}
-
-		attemptFlee() {
+		this.enemy.turnsToAttack = 3;
+		this.consecutivePrimarySymbol = null;
+		this.consecutivePrimaryCount = 0;
+		this.updateStatus();
+		// 戰鬥開始時啟用旋轉按鈕和自動旋轉按鈕
+		spinBtn.disabled = false;
+		const autoBtn = document.getElementById('auto-spin-btn'); if (autoBtn) autoBtn.disabled = false;
+		// 自動啟動插槽並在短延遲後停止（模擬自動戰鬥）
+		startSpin();
+		setTimeout(()=> stopSequentially(), 900);
+	}		attemptFlee() {
 			if (!this.inBattle) { showMessage('目前不在戰鬥中。'); return; }
 			// 取消自動旋轉
 			stopAutoSpinLoop();
@@ -393,8 +522,9 @@ function genEnemyName(type) {
 				this.inBattle = false;
 				spinBtn.disabled = true;
 				stopBtn.disabled = true;
-				// 停止自動旋轉（按鈕仍可操作，使用者可手動重新啟動）
+				// 停止自動旋轉並禁用自動旋轉按鈕
 				try { stopAutoSpinLoop(); } catch(e) {}
+				const autoBtn = document.getElementById('auto-spin-btn'); if (autoBtn) autoBtn.disabled = true;
 				const mf = document.getElementById('move-front'); if (mf) mf.disabled = false;
 				const ml = document.getElementById('move-left'); if (ml) ml.disabled = false;
 				const mr = document.getElementById('move-right'); if (mr) mr.disabled = false;
@@ -464,6 +594,18 @@ function genEnemyName(type) {
 				// 調整屬性幅度：rare +~1.5, epic +~2.2
 				if (it.atk) it.atk = Math.max(1, Math.round(it.atk * (rarity==='rare'?1.5: (rarity==='epic'?2.2:1))));
 				if (it.def) it.def = Math.max(1, Math.round(it.def * (rarity==='rare'?1.5: (rarity==='epic'?2.2:1))));
+				if (it.luck_gold) it.luck_gold = Math.max(1, Math.round(it.luck_gold * (rarity==='rare'?1.5: (rarity==='epic'?2.2:1))));
+				if (it.luck_combat) it.luck_combat = Math.max(1, Math.round(it.luck_combat * (rarity==='rare'?1.5: (rarity==='epic'?2.2:1))));
+				if (it.max_hp_bonus) it.max_hp_bonus = Math.max(1, Math.round(it.max_hp_bonus * (rarity==='rare'?1.5: (rarity==='epic'?2.2:1))));
+				
+				// 根據品質添加額外屬性
+				if (rarity !== 'common' && QUALITY_BONUS[it.slot] && QUALITY_BONUS[it.slot][rarity]) {
+					const bonusPool = QUALITY_BONUS[it.slot][rarity];
+					if (bonusPool.length > 0) {
+						const bonus = bonusPool[Math.floor(Math.random() * bonusPool.length)];
+						Object.assign(it, bonus);
+					}
+				}
 				return it;
 			}
 			const offers = [];
@@ -471,10 +613,8 @@ function genEnemyName(type) {
 				const base = ITEMS[Math.floor(Math.random()*ITEMS.length)];
 				const r = pickRarity();
 				const o = cloneItem(base, r);
-				// 計算價格：依稀有度調整
-				if (r==='common') o.price = 120 + Math.floor(Math.random()*100); // 120..219
-				else if (r==='rare') o.price = 300 + Math.floor(Math.random()*160); // 300..459
-				else o.price = 600 + Math.floor(Math.random()*400); // 600..999
+				// 隨機化價格：完全隨機，不透露品質
+				o.price = 149 + Math.floor(Math.random() * 880); // 149..1028 隨機金額
 				offers.push(o);
 			}
 			// 顯示面板
@@ -482,8 +622,8 @@ function genEnemyName(type) {
 			panel._purchased = 0;
 			offers.forEach((it, idx)=>{
 				const el = document.createElement('div');
-				// 在黑市購買前不顯示任何屬性（購買後才揭露）
-				el.innerHTML = `<div style="margin-bottom:6px;"><strong>${it.name}</strong> (${it.rarity}) <br/>`+
+				// 黑市商品：不顯示品質，只顯示名稱和隨機價格
+				el.innerHTML = `<div style="margin-bottom:6px;"><strong>${it.name}</strong> (?) <br/>`+
 					`價格: ${it.price} 金幣 <button class="bm-buy" data-idx="${idx}">購買</button></div>`;
 				itemsDiv.appendChild(el);
 			});
@@ -569,20 +709,114 @@ function genEnemyName(type) {
 		}
 
 		pyramid() {
-			showMessage('發現金字塔副本，挑戰中...');
-			if (Math.random() < 0.5) {
-				let g = 100;
-				if (this.player.luck_gold > 0) {
-					const finalG = Math.floor(g * (1 + 0.1 * this.player.luck_gold));
-					this.player.gold += finalG;
-					showMessage(`副本成功：金幣 +${finalG}（含金幣幸運加成 x${this.player.luck_gold}）。`);
-					this.player.luck_gold = Math.max(0, this.player.luck_gold - 1);
-					showMessage(`金幣幸運 -1（剩餘 ${this.player.luck_gold}）。`);
-				} else {
-					this.player.gold += g;
-					showMessage('副本成功：金幣 +100');
-				}
-			} else { this.player.hp = Math.max(0, this.player.hp - 20); showMessage('副本失敗：HP -20'); }
+			showMessage('🔺 你發現了一座古老的金字塔！');
+			showMessage('這裡充滿危險，但也蘊藏著巨大的寶藏...');
+			showMessage('金字塔副本：8步探險，敵人強度高、獎勵豐厚（3倍經驗/金幣），保證掉落優良以上裝備！');
+			// 創建選擇面板
+			this.showPyramidChoice();
+		}
+
+		showPyramidChoice() {
+			// 禁用移動按鈕
+			const mf = document.getElementById('move-front'); if (mf) mf.disabled = true;
+			const ml = document.getElementById('move-left'); if (ml) ml.disabled = true;
+			const mr = document.getElementById('move-right'); if (mr) mr.disabled = true;
+
+			// 創建選擇對話框
+			const panel = document.createElement('div');
+			panel.id = 'pyramid-choice-panel';
+			panel.style.cssText = `
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				background: linear-gradient(180deg, #fff9e6, #ffe4b3);
+				border: 3px solid #d4a855;
+				border-radius: 12px;
+				padding: 24px;
+				box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+				z-index: 100;
+				min-width: 350px;
+				text-align: center;
+			`;
+
+			panel.innerHTML = `
+				<h2 style="color: #8b4513; margin-top: 0;">🔺 金字塔副本</h2>
+				<p style="font-size: 1.1em; line-height: 1.6;">
+					是否進入金字塔探險？
+				</p>
+				<div style="background: #fff; padding: 12px; border-radius: 6px; margin: 12px 0; border: 1px solid #ddd;">
+					<strong>副本特性：</strong><br>
+					✦ 8步探險旅程<br>
+					✦ 敵人強度極高<br>
+					✦ 經驗值 x3 倍<br>
+					✦ 金幣 x3 倍<br>
+					✦ 保證掉落優良以上裝備<br>
+				</div>
+				<div style="display: flex; gap: 12px; justify-content: center; margin-top: 20px;">
+					<button id="pyramid-enter-btn" style="
+						padding: 12px 24px;
+						font-size: 1.1em;
+						background: linear-gradient(180deg, #e8b44c, #d4a02e);
+						color: white;
+						border: none;
+						border-radius: 6px;
+						cursor: pointer;
+						font-weight: bold;
+						box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+					">⚔️ 進入探險</button>
+					<button id="pyramid-decline-btn" style="
+						padding: 12px 24px;
+						font-size: 1.1em;
+						background: linear-gradient(180deg, #999, #777);
+						color: white;
+						border: none;
+						border-radius: 6px;
+						cursor: pointer;
+						font-weight: bold;
+						box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+					">🚶 離開</button>
+				</div>
+			`;
+
+			document.body.appendChild(panel);
+
+			// 綁定按鈕事件
+			document.getElementById('pyramid-enter-btn').addEventListener('click', () => {
+				this.enterPyramid();
+				document.body.removeChild(panel);
+			});
+
+			document.getElementById('pyramid-decline-btn').addEventListener('click', () => {
+				showMessage('你決定不進入金字塔，繼續前行。');
+				document.body.removeChild(panel);
+				// 恢復移動按鈕
+				if (mf) mf.disabled = false;
+				if (ml) ml.disabled = false;
+				if (mr) mr.disabled = false;
+			});
+		}
+
+		enterPyramid() {
+			showMessage('⚡ 你踏入了金字塔深處...');
+			showMessage('🔺 金字塔副本開始！你有 8 步探險機會。');
+			this.inPyramid = true;
+			this.pyramidSteps = 0;
+			this.normalMapSteps = this.map_steps; // 儲存當前步數
+			this.updateStatus();
+			// 恢復移動按鈕
+			const mf = document.getElementById('move-front'); if (mf) mf.disabled = false;
+			const ml = document.getElementById('move-left'); if (ml) ml.disabled = false;
+			const mr = document.getElementById('move-right'); if (mr) mr.disabled = false;
+		}
+
+		exitPyramid() {
+			showMessage('🌅 你走出了金字塔，回到了沙漠中。');
+			showMessage(`金字塔副本完成！探索了 ${this.pyramidSteps}/${this.pyramidMaxSteps} 步。`);
+			this.inPyramid = false;
+			this.pyramidSteps = 0;
+			this.map_steps = this.normalMapSteps; // 恢復正常地圖步數
+			this.updateStatus();
 		}
 
 		applySlotResults(results) {
@@ -705,33 +939,62 @@ function genEnemyName(type) {
 					// 若敵人死亡，結束戰鬥（立即處理）
 					if (this.enemy.hp <= 0) {
 						showMessage('你擊敗了敵人！戰鬥結束，獲得獎勵。');
+						
+						// 金字塔副本獎勵倍率
+						const pyramidMultiplier = this.inPyramid ? 3 : 1;
+						
 						// 獎勵：根據難度給予金幣與經驗值
-						const reward = 20 * this.difficulty;
+						const baseReward = 20 * this.difficulty;
+						const reward = baseReward * pyramidMultiplier;
 						this.player.gold += reward;
-						showMessage(`獲得金幣 ${reward}。`);
-						// 經驗值以難度與敵人強度計算
-						const xpGain = Math.floor(15 * this.difficulty * (this.enemy.strength || 1));
-						this.addXP(xpGain);
-						// 掉落機制
-						const roll = Math.random() * 100;
-						let dropped = null;
-						if (roll < 5) { // 5% 幾率史詩
-							dropped = ITEMS[Math.floor(Math.random()*ITEMS.length)].rarity === 'rare' ? ITEMS[Math.floor(Math.random()*ITEMS.length)] : ITEMS[1];
-						} else if (roll < 20) { // 15% 稀有
-							dropped = ITEMS.find(i=>i.rarity === 'rare') || ITEMS[0];
-						} else if (roll < 50) { // 30% 普通
-							dropped = ITEMS.find(i=>i.rarity === 'common') || ITEMS[0];
+						if (this.inPyramid) {
+							showMessage(`🔺 金字塔獎勵 x3！獲得金幣 ${reward} (基礎 ${baseReward} x3)。`);
+						} else {
+							showMessage(`獲得金幣 ${reward}。`);
 						}
-						if (dropped) {
+						
+						// 經驗值以難度與敵人強度計算
+						const baseXP = Math.floor(15 * this.difficulty * (this.enemy.strength || 1));
+						const xpGain = baseXP * pyramidMultiplier;
+						if (this.inPyramid) {
+							showMessage(`🔺 金字塔獎勵 x3！`);
+						}
+						this.addXP(xpGain);
+						
+						// 掉落機制
+						let dropped = null;
+						if (this.inPyramid) {
+							// 金字塔保證掉落優良(rare)以上裝備
+							const rareItems = ITEMS.filter(i => i.rarity === 'rare');
+							if (rareItems.length > 0) {
+								dropped = rareItems[Math.floor(Math.random() * rareItems.length)];
+							} else {
+								dropped = ITEMS[Math.floor(Math.random() * ITEMS.length)];
+							}
 							this.player.inventory.push(Object.assign({}, dropped));
-							showMessage(`敵人掉落：${dropped.name}（${dropped.rarity}）`);
+							showMessage(`🔺 金字塔寶藏！敵人掉落：${dropped.name}（${dropped.rarity}）`);
+						} else {
+							// 正常地圖掉落
+							const roll = Math.random() * 100;
+							if (roll < 5) { // 5% 幾率史詩
+								dropped = ITEMS[Math.floor(Math.random()*ITEMS.length)].rarity === 'rare' ? ITEMS[Math.floor(Math.random()*ITEMS.length)] : ITEMS[1];
+							} else if (roll < 20) { // 15% 稀有
+								dropped = ITEMS.find(i=>i.rarity === 'rare') || ITEMS[0];
+							} else if (roll < 50) { // 30% 普通
+								dropped = ITEMS.find(i=>i.rarity === 'common') || ITEMS[0];
+							}
+							if (dropped) {
+								this.player.inventory.push(Object.assign({}, dropped));
+								showMessage(`敵人掉落：${dropped.name}（${dropped.rarity}）`);
+							}
 						}
 						this.inBattle = false;
 						// 戰鬥結束後，停用旋轉按鈕並允許移動按鈕
 						spinBtn.disabled = true;
 						stopBtn.disabled = true;
-						// 停止自動旋轉（按鈕仍可操作，使用者可手動重新啟動）
+						// 停止自動旋轉並禁用自動旋轉按鈕
 						try { stopAutoSpinLoop(); } catch(e) {}
+						const autoBtn = document.getElementById('auto-spin-btn'); if (autoBtn) autoBtn.disabled = true;
 						const mf = document.getElementById('move-front'); if (mf) mf.disabled = false;
 						const ml = document.getElementById('move-left'); if (ml) ml.disabled = false;
 						const mr = document.getElementById('move-right'); if (mr) mr.disabled = false;
@@ -847,24 +1110,26 @@ function startAutoSpinLoop() {
 				const totalHeight = SYMBOLS.length * SYMBOL_HEIGHT * repeats;
 				const singleBlock = SYMBOLS.length * SYMBOL_HEIGHT; // one cycle height
 
-				// 計算 reel 中心偏移（要使某個 symbol 對齊到中央）
-				const reelHeight = reels[index].clientHeight || (SYMBOL_HEIGHT * 2);
-				const centerOffset = (reelHeight / 2) - (SYMBOL_HEIGHT / 2);
-
-				// 選擇目標 symbol index（0..SYMBOLS.length-1）
+				// 選擇目標符號
 				const targetIdx = SYMBOLS.indexOf(targetSymbol);
-				// 如果未找到（保險），隨機一個
 				const symbolIndex = targetIdx >= 0 ? targetIdx : Math.floor(Math.random()*SYMBOLS.length);
 
-				// 決定額外要轉幾圈（1~3）
-				const extraRounds = Math.floor(Math.random()*3) + 1; // 1..3 extra cycles
+				const extraRounds = Math.floor(Math.random()*3) + 1;
 
-				// 計算基礎 candidate position：以 currentPos 為起點，找到下一個對應 symbol 的位置
+				// 高亮框在 top: 30px，高度 60px（覆蓋 30-90px）
+				// 要讓符號 N 的頂部對齊到 30px：translateY(-(N * 60 + 30))
+				// 即：strip 位置 = N * 60 + 30
 				const baseCycle = Math.floor(currentPos / singleBlock);
-				let candidate = baseCycle * singleBlock + symbolIndex * SYMBOL_HEIGHT - centerOffset;
-				// 若 candidate 已經在或小於 currentPos，移到下一個 cycle
-				if (candidate <= currentPos) candidate += singleBlock;
-				// 加上額外圈數（讓它多轉幾圈）
+				
+				// 目標位置：符號索引 * 60 + 30（偏移到高亮框位置）
+				let candidate = baseCycle * singleBlock + symbolIndex * SYMBOL_HEIGHT + 30;
+				
+				// 如果已經過了，移到下一個循環
+				if (candidate <= currentPos) {
+					candidate += singleBlock;
+				}
+				
+				// 加上額外的旋轉圈數
 				const targetPos = candidate + extraRounds * singleBlock;
 
 				// 平滑轉到 targetPos
@@ -881,10 +1146,14 @@ function startAutoSpinLoop() {
 					strip.style.transform = `translateY(-${pos % totalHeight}px)`;
 					if (t < 1) requestAnimationFrame(animateStop);
 					else {
-						// 為了避免縮放/渲染差異，使用畫面取樣來判定中間的 symbol
-						// 等待一幀讓 transform 生效再取樣
+						// 確保最終位置精確對齊
+						const finalPos = to % totalHeight;
+						strip.style.transform = `translateY(-${finalPos}px)`;
+						
+						// 等待渲染完成後讀取符號
 						setTimeout(() => {
 							try {
+								// 使用畫面取樣來判定中間的符號
 								const rect = reels[index].getBoundingClientRect();
 								const cx = rect.left + rect.width / 2;
 								const cy = rect.top + rect.height / 2;
@@ -893,17 +1162,14 @@ function startAutoSpinLoop() {
 								while (el && !el.classList.contains('symbol')) {
 									el = el.parentElement;
 								}
-								const landedSymbol = el ? el.textContent : SYMBOLS[symbolIndex];
+								const landedSymbol = el ? el.textContent.trim() : targetSymbol;
 								results[index] = landedSymbol;
 							} catch (e) {
-								// 如果出錯，退回到數學推算
-								const finalPos = pos % totalHeight;
-								let k = Math.round((finalPos + centerOffset) / SYMBOL_HEIGHT) % SYMBOLS.length;
-								if (k < 0) k += SYMBOLS.length;
-								results[index] = SYMBOLS[k];
+								// 如果出錯，直接使用目標符號
+								results[index] = targetSymbol;
 							}
 							resolve();
-						}, 30);
+						}, 50);
 					}
 				};
 				requestAnimationFrame(animateStop);
@@ -927,6 +1193,10 @@ function startAutoSpinLoop() {
 
 	// 事件
 	spinBtn.addEventListener('click', ()=>{
+		if (!game.inBattle) {
+			showMessage('目前不在戰鬥中，無法使用旋轉。');
+			return;
+		}
 		spinBtn.disabled = true;
 		stopBtn.disabled = false;
 		showMessage('開始旋轉...');
@@ -953,9 +1223,9 @@ function startAutoSpinLoop() {
 	const moveFront = document.getElementById('move-front');
 	const moveLeft = document.getElementById('move-left');
 	const moveRight = document.getElementById('move-right');
-	if (moveFront) moveFront.addEventListener('click', ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.move('前'); });
-	if (moveLeft) moveLeft.addEventListener('click', ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.move('左'); });
-	if (moveRight) moveRight.addEventListener('click', ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.move('右'); });
+	if (moveFront) moveFront.addEventListener('click', ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.moveStep('前'); });
+	if (moveLeft) moveLeft.addEventListener('click', ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.moveStep('左'); });
+	if (moveRight) moveRight.addEventListener('click', ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.moveStep('右'); });
 
 	// 裝備按鈕行為
 	const equipBtn = document.getElementById('equip-btn');
@@ -980,6 +1250,10 @@ function startAutoSpinLoop() {
 		// 自動旋轉與逃跑按鈕綁定
 		const autoBtn = document.getElementById('auto-spin-btn');
 		if (autoBtn) autoBtn.addEventListener('click', ()=>{
+			if (!game.inBattle) {
+				showMessage('目前不在戰鬥中，無法使用自動旋轉。');
+				return;
+			}
 			autoSpin = !autoSpin;
 			autoBtn.textContent = autoSpin ? '停止自動' : '自動旋轉';
 			if (autoSpin) startAutoSpinLoop(); else stopAutoSpinLoop();
