@@ -12,10 +12,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		languageSelect.addEventListener('change', function() {
 			changeLanguage(this.value);
 			if (window.game) {
+				// 清空遊戲輸出區域
+				output.innerHTML = '';
 				// 重新生成方向提示以更新語言
-				if (game.currentDirections) {
-					game.generateDirectionHints();
-				}
+				game.generateDirectionHints();
+				// 更新玩家和敵人狀態顯示
+				game.updateStatus();
 			}
 		});
 	}
@@ -644,7 +646,13 @@ function genEnemyName(type) {
 				if (eventPath.branches.length > 1) branchHint = ' ⭐';
 			}
 			
-			message += `${directionTexts[dir]} ${hint}${branchHint}。\n`;
+			// 根據語言調整格式
+			if (currentLanguage === 'zh-TW') {
+				message += `${directionTexts[dir]} ${hint}${branchHint}。\n`;
+			} else {
+				// 英文和法文：方向詞首字母大寫，提示已包含完整句子
+				message += `${directionTexts[dir]} ${hint}${branchHint}.\n`;
+			}
 		});
 		
 		message += `\n${t('chooseDirection')}`;
