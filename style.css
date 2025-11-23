@@ -27,12 +27,16 @@ body {
     flex: 1;
 }
 #game-output {
-    min-height: 120px;
     margin-bottom: 16px;
     background: #f0e6d2;
     border-radius: 4px;
     padding: 12px;
     font-size: 1.1em;
+    /* 固定高度，內容滾動 */
+    height: 320px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 #game-input {
     width: 70%;
@@ -421,9 +425,9 @@ body {
     #game-output {
         font-size: 0.9em;
         padding: 8px;
-        max-height: 200px;
         height: 200px;
-        min-height: 120px;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
     
     /* 歡迎面板 */
@@ -624,9 +628,11 @@ body {
     overflow-wrap: break-word;
     white-space: pre-wrap;
     /* 固定高度並允許捲動，顯示最新 20 條訊息 */
-    max-height: 320px;
     height: 320px;
     overflow-y: auto;
+    /* 確保視窗固定 */
+    position: relative;
+    box-sizing: border-box;
 }
 
 /* 隱藏原本的指令輸入欄位（可復原：移除此規則） */
