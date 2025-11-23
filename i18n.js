@@ -159,6 +159,19 @@ const TRANSLATIONS = {
 		quicksandStruggle: '😰 你在流沙中掙扎，消耗了大量體力和生命。',
 		consumeStamina: '消耗體力',
 		
+		// Black market
+		price: '價格',
+		buy: '購買',
+		purchased: '已購買',
+		blackMarketLimit: '已達黑市購買上限（2 件）。',
+		blackMarketEnd: '黑市交易結束。',
+		notEnoughGold: '金幣不足，無法購買此物品。',
+		blackMarketBought: '在黑市購買',
+		spent: '花費',
+		revealAttributes: '揭露裝備屬性',
+		noSpecialAttributes: '無特殊屬性',
+		leaveBlackMarket: '離開黑市。',
+		
 		// Language selector
 		language: '語言',
 		languageChinese: '繁體中文',
@@ -325,6 +338,19 @@ const TRANSLATIONS = {
 		quicksandStruggle: '😰 You struggled in quicksand, consuming lots of stamina and health.',
 		consumeStamina: 'Consumed stamina',
 		
+		// Black market
+		price: 'Price',
+		buy: 'Buy',
+		purchased: 'Purchased',
+		blackMarketLimit: 'Black market purchase limit reached (2 items).',
+		blackMarketEnd: 'Black market trade ended.',
+		notEnoughGold: 'Not enough gold to buy this item.',
+		blackMarketBought: 'Bought at black market',
+		spent: 'spent',
+		revealAttributes: 'Revealed equipment attributes',
+		noSpecialAttributes: 'No special attributes',
+		leaveBlackMarket: 'Left black market.',
+		
 		// Language selector
 		language: 'Language',
 		languageChinese: '繁體中文',
@@ -490,6 +516,19 @@ const TRANSLATIONS = {
 		caravanGift: '🍞 La caravane a partagé nourriture et eau, PV',
 		quicksandStruggle: '😰 Vous avez lutté dans les sables mouvants, consommant beaucoup d\'endurance et de santé.',
 		consumeStamina: 'Endurance consommée',
+		
+		// Black market
+		price: 'Prix',
+		buy: 'Acheter',
+		purchased: 'Acheté',
+		blackMarketLimit: 'Limite d\'achat du marché noir atteinte (2 objets).',
+		blackMarketEnd: 'Commerce du marché noir terminé.',
+		notEnoughGold: 'Pas assez d\'or pour acheter cet objet.',
+		blackMarketBought: 'Acheté au marché noir',
+		spent: 'dépensé',
+		revealAttributes: 'Attributs de l\'équipement révélés',
+		noSpecialAttributes: 'Aucun attribut spécial',
+		leaveBlackMarket: 'Quitté le marché noir.',
 		
 		// Language selector
 		language: 'Langue',

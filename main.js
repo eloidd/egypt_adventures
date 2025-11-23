@@ -1112,8 +1112,9 @@ function genEnemyName(type) {
 			offers.forEach((it, idx)=>{
 				const el = document.createElement('div');
 				// 黑市商品：不顯示品質，只顯示名稱和隨機價格
+				const goldText = currentLanguage === 'zh-TW' ? '金幣' : currentLanguage === 'fr' ? 'd\'or' : 'gold';
 				el.innerHTML = `<div style="margin-bottom:6px;"><strong>${it.name}</strong> (?) <br/>`+
-					`價格: ${it.price} 金幣 <button class="bm-buy" data-idx="${idx}">購買</button></div>`;
+					`${t('price')}: ${it.price} ${goldText} <button class="bm-buy" data-idx="${idx}">${t('buy')}</button></div>`;
 				itemsDiv.appendChild(el);
 			});
 			panel.style.display = 'block';
@@ -1121,36 +1122,40 @@ function genEnemyName(type) {
 			Array.from(itemsDiv.querySelectorAll('.bm-buy')).forEach(b=>{
 				b.addEventListener('click', (e)=>{
 					const idx = parseInt(e.target.getAttribute('data-idx'));
-					if (panel._purchased >= 2) { showMessage('已達黑市購買上限（2 件）。'); return; }
+					if (panel._purchased >= 2) { showMessage(t('blackMarketLimit')); return; }
 					const offer = offers[idx];
 					if (!offer) return;
-					if (game.player.gold < offer.price) { showMessage('金幣不足，無法購買此物品。'); return; }
+					if (game.player.gold < offer.price) { showMessage(t('notEnoughGold')); return; }
 					// 扣款並加入背包
 					game.player.gold -= offer.price;
 					// 將真實物件加入背包，並揭露其屬性給玩家知曉
 					game.player.inventory.push(Object.assign({}, offer));
-					showMessage(`在黑市購買：${offer.name} (${offer.rarity})，花費 ${offer.price} 金幣。`);
+					const goldText = currentLanguage === 'zh-TW' ? '金幣' : currentLanguage === 'fr' ? 'd\'or' : 'gold';
+					showMessage(`${t('blackMarketBought')}: ${offer.name} (${offer.rarity}), ${t('spent')} ${offer.price} ${goldText}.`);
 					// 揭露屬性
 					let attrs = [];
-					if (offer.atk) attrs.push(`攻+${offer.atk}`);
-					if (offer.def) attrs.push(`防+${offer.def}`);
-					if (offer.luck_gold) attrs.push(`金運+${offer.luck_gold}`);
-					if (attrs.length === 0) attrs.push('無特殊屬性');
-					showMessage(`揭露裝備屬性：${attrs.join('  ')}`);
+					const atkLabel = currentLanguage === 'zh-TW' ? '攻' : currentLanguage === 'fr' ? 'ATT' : 'ATK';
+					const defLabel = currentLanguage === 'zh-TW' ? '防' : currentLanguage === 'fr' ? 'DÉF' : 'DEF';
+					const luckLabel = currentLanguage === 'zh-TW' ? '金運' : currentLanguage === 'fr' ? 'Chance Or' : 'Gold Luck';
+					if (offer.atk) attrs.push(`${atkLabel}+${offer.atk}`);
+					if (offer.def) attrs.push(`${defLabel}+${offer.def}`);
+					if (offer.luck_gold) attrs.push(`${luckLabel}+${offer.luck_gold}`);
+					if (attrs.length === 0) attrs.push(t('noSpecialAttributes'));
+					showMessage(`${t('revealAttributes')}: ${attrs.join('  ')}`);
 					panel._purchased += 1;
 					// 標記按鈕為已購買
-					e.target.textContent = '已購買';
+					e.target.textContent = t('purchased');
 					e.target.disabled = true;
 					game.updateStatus();
 					if (panel._purchased >= 2) {
-						showMessage('已達黑市購買上限（2 件）。黑市交易結束。');
+						showMessage(`${t('blackMarketLimit')} ${t('blackMarketEnd')}`);
 						Array.from(itemsDiv.querySelectorAll('.bm-buy')).forEach(bb=>{ bb.disabled = true; });
 					}
 				});
 			});
 			// 關閉按鈕
 			const close = document.getElementById('close-blackmarket');
-			if (close) close.onclick = ()=>{ panel.style.display = 'none'; showMessage('離開黑市。'); 
+			if (close) close.onclick = ()=>{ panel.style.display = 'none'; showMessage(t('leaveBlackMarket')); 
 				// 恢復移動按鈕
 				const mf = document.getElementById('move-front'); if (mf) mf.disabled = false;
 				const ml = document.getElementById('move-left'); if (ml) ml.disabled = false;
