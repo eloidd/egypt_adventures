@@ -1068,23 +1068,23 @@ function genEnemyName(type) {
 					<div class="equip-row">
 						<div>
 							<div style="margin-bottom: 4px; pointer-events: none; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${currentLanguage === 'zh-TW' ? '武器' : currentLanguage === 'fr' ? 'Arme' : 'Weapon'}: ${this.player.equipment.weapon ? this.formatItem(this.player.equipment.weapon) : (currentLanguage === 'zh-TW' ? '無' : currentLanguage === 'fr' ? 'Aucun' : 'None')}</div>
-							<div style="display: flex; gap: 4px; pointer-events: none;">
-								<button class="open-equip-btn" data-slot="weapon" style="pointer-events: auto !important; position: relative; z-index: 2000; flex: 1;">${currentLanguage === 'zh-TW' ? '裝備' : currentLanguage === 'fr' ? 'Équiper' : 'Equip'}</button>
-								<button class="unequip-btn" data-slot="weapon" style="pointer-events: auto !important; position: relative; z-index: 2000; flex: 1;">${currentLanguage === 'zh-TW' ? '卸下' : currentLanguage === 'fr' ? 'Enlever' : 'Unequip'}</button>
+							<div style="display: flex; gap: 4px;">
+								<button class="open-equip-btn" data-slot="weapon" style="position: relative; z-index: 2000; flex: 1;">${currentLanguage === 'zh-TW' ? '裝備' : currentLanguage === 'fr' ? 'Équiper' : 'Equip'}</button>
+								<button class="unequip-btn" data-slot="weapon" style="position: relative; z-index: 2000; flex: 1;">${currentLanguage === 'zh-TW' ? '卸下' : currentLanguage === 'fr' ? 'Enlever' : 'Unequip'}</button>
 							</div>
 						</div>
 						<div>
 							<div style="margin-bottom: 4px; pointer-events: none; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${currentLanguage === 'zh-TW' ? '防具' : currentLanguage === 'fr' ? 'Armure' : 'Armor'}: ${this.player.equipment.armor ? this.formatItem(this.player.equipment.armor) : (currentLanguage === 'zh-TW' ? '無' : currentLanguage === 'fr' ? 'Aucun' : 'None')}</div>
-							<div style="display: flex; gap: 4px; pointer-events: none;">
-								<button class="open-equip-btn" data-slot="armor" style="pointer-events: auto !important; position: relative; z-index: 2000; flex: 1;">${currentLanguage === 'zh-TW' ? '裝備' : currentLanguage === 'fr' ? 'Équiper' : 'Equip'}</button>
-								<button class="unequip-btn" data-slot="armor" style="pointer-events: auto !important; position: relative; z-index: 2000; flex: 1;">${currentLanguage === 'zh-TW' ? '卸下' : currentLanguage === 'fr' ? 'Enlever' : 'Unequip'}</button>
+							<div style="display: flex; gap: 4px;">
+								<button class="open-equip-btn" data-slot="armor" style="position: relative; z-index: 2000; flex: 1;">${currentLanguage === 'zh-TW' ? '裝備' : currentLanguage === 'fr' ? 'Équiper' : 'Equip'}</button>
+								<button class="unequip-btn" data-slot="armor" style="position: relative; z-index: 2000; flex: 1;">${currentLanguage === 'zh-TW' ? '卸下' : currentLanguage === 'fr' ? 'Enlever' : 'Unequip'}</button>
 							</div>
 						</div>
 						<div>
 							<div style="margin-bottom: 4px; pointer-events: none; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${currentLanguage === 'zh-TW' ? '護符' : currentLanguage === 'fr' ? 'Amulette' : 'Amulet'}: ${this.player.equipment.amulet ? this.formatItem(this.player.equipment.amulet) : (currentLanguage === 'zh-TW' ? '無' : currentLanguage === 'fr' ? 'Aucun' : 'None')}</div>
-							<div style="display: flex; gap: 4px; pointer-events: none;">
-								<button class="open-equip-btn" data-slot="amulet" style="pointer-events: auto !important; position: relative; z-index: 2000; flex: 1;">${currentLanguage === 'zh-TW' ? '裝備' : currentLanguage === 'fr' ? 'Équiper' : 'Equip'}</button>
-								<button class="unequip-btn" data-slot="amulet" style="pointer-events: auto !important; position: relative; z-index: 2000; flex: 1;">${currentLanguage === 'zh-TW' ? '卸下' : currentLanguage === 'fr' ? 'Enlever' : 'Unequip'}</button>
+							<div style="display: flex; gap: 4px;">
+								<button class="open-equip-btn" data-slot="amulet" style="position: relative; z-index: 2000; flex: 1;">${currentLanguage === 'zh-TW' ? '裝備' : currentLanguage === 'fr' ? 'Équiper' : 'Equip'}</button>
+								<button class="unequip-btn" data-slot="amulet" style="position: relative; z-index: 2000; flex: 1;">${currentLanguage === 'zh-TW' ? '卸下' : currentLanguage === 'fr' ? 'Enlever' : 'Unequip'}</button>
 							</div>
 						</div>
 					</div>
@@ -3167,16 +3167,16 @@ function startAutoSpinLoop() {
 				
 				// 目標位置計算：
 				// 桌面版和手機版統一使用 60px 符號高度
-				// 高亮框：桌面版 top: 30px, 手機版 top: 0px
-				// 要讓符號頂部對齊到高亮框頂部
+				// 高亮框：桌面版 top: 30px (30-90px), 手機版 top: 0px (0-60px)
+				// 目標：讓符號顯示在高亮框**上方**
 				
 				// 偵測是否為手機版（屏幕寬度 <= 600px）
 				const isMobile = window.innerWidth <= 600;
 				
-				// 桌面版：高亮框在 30px，符號出現在 0-60px 區域，strip 位置 = cycle × 420 + symbolIndex × 60 - 30
-				// 手機版：高亮框在 0px，符號出現在 0-60px 區域，strip 位置 = cycle × 420 + symbolIndex × 60 + 0
-				const highlightTop = isMobile ? 0 : 30;
-				const targetPos = targetCycle * singleBlock + symbolIndex * SYMBOL_HEIGHT - highlightTop;
+				// 桌面版：高亮框在 30-90px，符號要在上方（-30 到 30px），strip = cycle × 420 + index × 60 - 30
+				// 手機版：高亮框在 0-60px，符號要在上方（-60 到 0px），strip = cycle × 420 + index × 60 - 60
+				const symbolOffset = isMobile ? 60 : 30;
+				const targetPos = targetCycle * singleBlock + symbolIndex * SYMBOL_HEIGHT - symbolOffset;
 				
 				console.log(`Reel ${index}: Target=${targetSymbol}, symbolIndex=${symbolIndex}, targetPos=${targetPos}px, mobile=${isMobile}`);
 				
