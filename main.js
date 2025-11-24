@@ -122,7 +122,7 @@ X:10
 T:Egypt_Battle_Full_32bars
 M:4/4
 L:1/8
-Q:188
+Q:220
 K:Aphr
 % LEAD MELODY
 A2 C2 A2 C2 | D4 C2 B,2 | A2 C2 D2 E2 | F4 E2 D2 |
