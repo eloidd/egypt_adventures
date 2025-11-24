@@ -557,7 +557,6 @@ button[disabled] {
     border-radius: 8px;
     border: 1px solid rgba(0,0,0,0.04);
     position: relative;
-    z-index: 5;
 }
 
 #slot-center {
@@ -802,6 +801,7 @@ button[disabled] {
 @media (max-width:800px) {
     #battle-area { 
         flex-direction: column;
+        z-index: auto;
     }
     .status-box-side {
         flex: 1 1 auto;
@@ -1211,6 +1211,7 @@ button[disabled] {
         gap: 5px;
         padding: 8px;
         order: 4;
+        z-index: auto;
     }
     
     /* 拉霸機區域移到最上方（原本在中間） */
@@ -1551,6 +1552,7 @@ button[disabled] {
         flex-direction: row !important;
         flex-wrap: wrap !important;
         gap: 5px;
+        z-index: auto;
     }
     
     /* 保持拉霸機在最上方 */
