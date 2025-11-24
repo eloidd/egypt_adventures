@@ -1008,15 +1008,19 @@ function genEnemyName(type) {
 				if (summary) {
 					summary.textContent = `HP:${this.player.hp}/${this.player.max_hp}  體力:${this.player.stamina}/${this.player.max_stamina}  金幣:${this.player.gold}  幸運(戰鬥):${this.player.luck_combat} 金幣幸運:${this.player.luck_gold}`;
 				}
-			// 綁定狀態面板上的裝備按鈕（每次更新都重新綁定）
+			// 綁定狀態面板上的裝備按鈕（防止重複綁定）
 			setTimeout(()=>{
 				Array.from(document.querySelectorAll('.unequip-btn')).forEach(b=>{ 
+					if (b._boundUnequip) return;
+					b._boundUnequip = true;
 					b.addEventListener('click', ()=>{ 
 						const slot = b.getAttribute('data-slot'); 
 						this.unequipItem(slot); 
 					}); 
 				});
 				Array.from(document.querySelectorAll('.open-equip-btn')).forEach(b=>{ 
+					if (b._boundEquip) return;
+					b._boundEquip = true;
 					b.addEventListener('click', ()=>{ 
 						const slot = b.getAttribute('data-slot'); 
 						this.showEquipmentPanel(slot); 
