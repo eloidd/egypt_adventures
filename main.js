@@ -3160,10 +3160,11 @@ function startAutoSpinLoop() {
 				const targetCycle = 3; // 使用第 3 個循環
 				
 				// 目標位置計算：
-				// - targetCycle * singleBlock: 跳到第 N 個循環
-				// - symbolIndex * SYMBOL_HEIGHT: 符號在循環中的位置
-				// - 30: 偏移量，讓符號頂部對齊到高亮框頂部（30px）
-				const targetPos = targetCycle * singleBlock + symbolIndex * SYMBOL_HEIGHT + 30;
+				// 高亮框位置：top: 30px, height: 60px (30-90px範圍)
+				// 要讓符號顯示在高亮框上方，需要將符號頂部對齊到 -30px
+				// 所以 strip 要向上移動到：cycle × 420 + symbolIndex × 60 - 30
+				// 這樣符號會出現在高亮框上方區域（0-60px），而不是高亮框內（30-90px）
+				const targetPos = targetCycle * singleBlock + symbolIndex * SYMBOL_HEIGHT - 30;
 				
 				console.log(`Reel ${index}: Target=${targetSymbol}, symbolIndex=${symbolIndex}, targetPos=${targetPos}px`);
 				
@@ -3217,17 +3218,34 @@ function startAutoSpinLoop() {
 			// 等待 DOM 完全更新
 			return new Promise(resolve => setTimeout(resolve, 100));
 		}).then(() => {
-			// 驗證結果
+			// 驗證結果並顯示位置資訊
 			console.log('=== Final verification ===');
+			let positionInfo = '';
 			for (let i = 0; i < 3; i++) {
 				const strip = reels[i].querySelector('.strip');
 				if (strip) {
 					const transform = strip.style.transform;
 					const match = transform.match(/-?[\d.]+/);
 					const currentPos = match ? parseFloat(match[0]) : 0;
-					console.log(`Reel ${i}: Final transform=${transform}, result=${results[i]}`);
+					
+					// 計算符號在高亮框上方的位置
+					// 修正後：符號應該在 0-60px 區域（高亮框上方）
+					// strip 位置 = cycle × 420 + symbolIndex × 60 - 30
+					const symbolIndexInView = Math.round((currentPos + 30) / 60) % 7;
+					const expectedSymbol = SYMBOLS[symbolIndexInView];
+					
+					console.log(`Reel ${i}: pos=${currentPos}px, symbolIndex=${symbolIndexInView}, expected=${expectedSymbol}, actual=${results[i]}`);
+					positionInfo += `\n輪${i+1}: ${currentPos}px → ${results[i]}`;
+					
+					// 檢查對齊（修正後的對齊位置）
+					const alignedPos = Math.round((currentPos + 30) / 60) * 60 - 30;
+					if (Math.abs(currentPos - alignedPos) > 1) {
+						console.warn(`Reel ${i}: Misaligned! Current=${currentPos}, should be=${alignedPos}`);
+						mobileDebug(`⚠️ 輪${i+1}未對齊: ${currentPos}px (應為${alignedPos}px)`, true);
+					}
 				}
 			}
+			mobileDebug(`位置檢查:${positionInfo}`);
 			
 			// 確保結果陣列完整
 			console.log('Final results array:', results);
@@ -3238,7 +3256,11 @@ function startAutoSpinLoop() {
 					if (!results[i]) results[i] = targetSymbols[i] || '⚔️';
 				}
 			}
+			
+			// 顯示結果到調試面板
+			mobileDebug(`🎰 插槽結果: ${results[0]} | ${results[1]} | ${results[2]}`);
 			showMessage(`插槽結果： ${results.join(' | ')}`);
+			
 			// 把結果傳給遊戲邏輯進行處理（attack/skill/defend/enemy）
 			try {
 				game.applySlotResults(results);
