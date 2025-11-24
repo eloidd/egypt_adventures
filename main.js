@@ -282,9 +282,11 @@ A4 C2 E2 | F4 G2 A2 | G4 F2 E2 | A8 ||
 	setVolume(value) {
 		this.volume = value / 100;
 		localStorage.setItem('musicVolume', this.volume);
-		// 如果正在播放，更新音量
+		// 如果正在播放，更新音量（需考慮音軌類型的音量倍增器）
 		if (this.currentNote && this.currentNote.gainNode) {
-			this.currentNote.gainNode.gain.value = this.volume;
+			const trackVolumeMultiplier = this.currentTrack === 'battle' ? 0.8 : 1.0;
+			const finalVolume = this.volume * trackVolumeMultiplier;
+			this.currentNote.gainNode.gain.value = finalVolume;
 		}
 	},
 	
