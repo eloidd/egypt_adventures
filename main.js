@@ -822,10 +822,10 @@ function genEnemyName(type) {
 			if (shown === 0) html += `<div>${t('noMatchingItems')}</div>`;
 			content.innerHTML = html;
 			panel.style.display = 'block';
-			// 連結裝備按鈕 - 使用觸控友善的事件處理
+			// 連結裝備按鈕
 			setTimeout(() => {
 				Array.from(content.querySelectorAll('.equip-now')).forEach(b=>{
-					addTouchClickEvent(b, ()=>{
+					b.addEventListener('click', ()=>{
 						const idx = parseInt(b.getAttribute('data-idx'));
 						this.equipItem(idx);
 						this.showEquipmentPanel(filterSlot);
@@ -833,14 +833,14 @@ function genEnemyName(type) {
 				});
 				// 內嵌卸下/裝備按鈕（在面板內）
 				Array.from(content.querySelectorAll('.unequip-inline')).forEach(b=>{
-					addTouchClickEvent(b, ()=>{
+					b.addEventListener('click', ()=>{
 						const slot = b.getAttribute('data-slot');
 						this.unequipItem(slot);
 						this.showEquipmentPanel(filterSlot);
 					});
 				});
 				Array.from(content.querySelectorAll('.open-equip-inline')).forEach(b=>{
-					addTouchClickEvent(b, ()=>{
+					b.addEventListener('click', ()=>{
 						const slot = b.getAttribute('data-slot');
 						this.showEquipmentPanel(slot);
 					});
@@ -1008,16 +1008,16 @@ function genEnemyName(type) {
 				if (summary) {
 					summary.textContent = `HP:${this.player.hp}/${this.player.max_hp}  體力:${this.player.stamina}/${this.player.max_stamina}  金幣:${this.player.gold}  幸運(戰鬥):${this.player.luck_combat} 金幣幸運:${this.player.luck_gold}`;
 				}
-			// 綁定狀態面板上的裝備按鈕（每次更新都重新綁定）- 使用觸控友善事件
+			// 綁定狀態面板上的裝備按鈕（每次更新都重新綁定）
 			setTimeout(()=>{
 				Array.from(document.querySelectorAll('.unequip-btn')).forEach(b=>{ 
-					addTouchClickEvent(b, ()=>{ 
+					b.addEventListener('click', ()=>{ 
 						const slot = b.getAttribute('data-slot'); 
 						this.unequipItem(slot); 
 					}); 
 				});
 				Array.from(document.querySelectorAll('.open-equip-btn')).forEach(b=>{ 
-					addTouchClickEvent(b, ()=>{ 
+					b.addEventListener('click', ()=>{ 
 						const slot = b.getAttribute('data-slot'); 
 						this.showEquipmentPanel(slot); 
 					}); 
@@ -1583,9 +1583,9 @@ function genEnemyName(type) {
 				itemsDiv.appendChild(el);
 			});
 			panel.style.display = 'block';
-			// 綁定購買 - 使用觸控友善的事件處理
+			// 綁定購買按鈕
 			Array.from(itemsDiv.querySelectorAll('.bm-buy')).forEach(b=>{
-				addTouchClickEvent(b, ()=>{
+				b.addEventListener('click', ()=>{
 					const idx = parseInt(b.getAttribute('data-idx'));
 					if (panel._purchased >= 2) { showMessage(t('blackMarketLimit')); return; }
 					const offer = offers[idx];
@@ -1618,11 +1618,11 @@ function genEnemyName(type) {
 					}
 				});
 			});
-			// 關閉按鈕 - 使用觸控友善的事件處理
+			// 關閉按鈕
 			const close = document.getElementById('close-blackmarket');
 			if (close && !close._bmBound) {
 				close._bmBound = true;
-				addTouchClickEvent(close, ()=>{ 
+				close.addEventListener('click', ()=>{ 
 					panel.style.display = 'none'; 
 					game.inShop = false; // 清除商店標記
 					showMessage(t('leaveBlackMarket')); 
@@ -2307,9 +2307,9 @@ function genEnemyName(type) {
 			});
 			invDiv.innerHTML = html;
 			
-			// 綁定出售按鈕 - 使用觸控友善的事件處理
+			// 綁定出售按鈕
 			Array.from(invDiv.querySelectorAll('.tp-sell-btn')).forEach(btn => {
-				addTouchClickEvent(btn, () => {
+				btn.addEventListener('click', () => {
 					const idx = parseInt(btn.getAttribute('data-idx'));
 					const price = parseInt(btn.getAttribute('data-price'));
 					const item = this.player.inventory[idx];
@@ -2328,9 +2328,9 @@ function genEnemyName(type) {
 		
 		updateInventory();
 		
-		// 綁定購買按鈕 - 使用觸控友善的事件處理
+		// 綁定購買按鈕
 		Array.from(panel.querySelectorAll('.tp-buy-btn')).forEach(btn => {
-			addTouchClickEvent(btn, () => {
+			btn.addEventListener('click', () => {
 				const item = btn.getAttribute('data-item');
 				const price = parseInt(btn.getAttribute('data-price'));
 				
@@ -2361,10 +2361,10 @@ function genEnemyName(type) {
 			});
 		});
 		
-		// 關閉按鈕 - 使用觸控友善的事件處理
+		// 關閉按鈕
 		const closeBtn = document.getElementById('tp-close');
 		if (closeBtn) {
-			addTouchClickEvent(closeBtn, () => {
+			closeBtn.addEventListener('click', () => {
 				document.body.removeChild(panel);
 				showMessage('你離開了驛站，繼續踏上旅程。');
 				// 恢復移動按鈕
@@ -2463,10 +2463,10 @@ function genEnemyName(type) {
 
 			document.body.appendChild(panel);
 
-			// 綁定按鈕事件 - 使用觸控友善的事件處理
+			// 綁定按鈕事件
 			const enterBtn = document.getElementById('pyramid-enter-btn');
 			if (enterBtn) {
-				addTouchClickEvent(enterBtn, () => {
+				enterBtn.addEventListener('click', () => {
 					this.enterPyramid();
 					document.body.removeChild(panel);
 				});
@@ -2474,7 +2474,7 @@ function genEnemyName(type) {
 
 			const declineBtn = document.getElementById('pyramid-decline-btn');
 			if (declineBtn) {
-				addTouchClickEvent(declineBtn, () => {
+				declineBtn.addEventListener('click', () => {
 					showMessage('你決定不進入金字塔，繼續前行。');
 					document.body.removeChild(panel);
 					// 恢復移動按鈕
@@ -3202,111 +3202,20 @@ function startAutoSpinLoop() {
 		});
 	}
 
-	// 通用的觸控事件綁定函數（支援手機和桌面）
-	function addTouchClickEvent(element, callback) {
-		if (!element) return;
-		let touchHandled = false;
-		let touchStartTime = 0;
-		
-		// 使用 touchend 以獲得更好的兼容性
-		element.addEventListener('touchstart', (e) => {
-			// 檢查元素是否被禁用
-			if (element.disabled) return;
-			touchStartTime = Date.now();
-		}, { passive: true });
-		
-		element.addEventListener('touchend', (e) => {
-			// 檢查元素是否被禁用
-			if (element.disabled) return;
-			// 確保是快速點擊（非滑動）
-			if (Date.now() - touchStartTime < 500) {
-				e.preventDefault();
-				e.stopPropagation();
-				touchHandled = true;
-				callback();
-				setTimeout(() => { touchHandled = false; }, 300);
-			}
-		}, { passive: false });
-		
-		element.addEventListener('click', (e) => {
-			// 檢查元素是否被禁用
-			if (element.disabled) return;
-			if (!touchHandled) {
-				e.preventDefault();
-				e.stopPropagation();
-				callback();
-			}
-		});
-	}
-	
 	// 全局函數：強制啟用戰鬥按鈕
 	window.enableBattleButtons = function() {
 		if (game.inBattle) {
 			spinBtn.disabled = false;
-			spinBtn.style.pointerEvents = 'auto';
-			spinBtn.style.opacity = '1';
-			spinBtn.style.touchAction = 'manipulation';
 			const autoBtn = document.getElementById('auto-spin-btn');
 			if (autoBtn) {
 				autoBtn.disabled = false;
-				autoBtn.style.pointerEvents = 'auto';
-				autoBtn.style.opacity = '1';
-				autoBtn.style.touchAction = 'manipulation';
 			}
 			stopBtn.disabled = true;
-			console.log('Battle buttons enabled');
 		}
 	};
-
-	// 全局函數：強制啟用所有非禁用按鈕的觸控
-	window.enableAllButtonsTouch = function() {
-		const allButtons = document.querySelectorAll('button:not([disabled])');
-		allButtons.forEach(btn => {
-			btn.style.pointerEvents = 'auto';
-			btn.style.touchAction = 'manipulation';
-			btn.style.webkitTapHighlightColor = 'rgba(0, 0, 0, 0.1)';
-			console.log('Button enabled:', btn.id || btn.textContent);
-		});
-	};
-
-	// 確保按鈕初始狀態正確
-	spinBtn.style.pointerEvents = 'auto';
-	spinBtn.style.touchAction = 'manipulation';
-	const autoSpinBtn = document.getElementById('auto-spin-btn');
-	if (autoSpinBtn) {
-		autoSpinBtn.style.pointerEvents = 'auto';
-		autoSpinBtn.style.touchAction = 'manipulation';
-		autoSpinBtn.disabled = false; // 確保初始不被禁用
-	}
-	
-	// 確保所有功能按鈕（儲存、讀取、逃離）都可觸控
-	const initialSaveBtn = document.getElementById('save-btn');
-	const initialLoadBtn = document.getElementById('load-btn');
-	const initialFleeBtn = document.getElementById('flee-btn');
-	
-	if (initialSaveBtn) {
-		initialSaveBtn.style.pointerEvents = 'auto';
-		initialSaveBtn.style.touchAction = 'manipulation';
-		initialSaveBtn.disabled = false;
-	}
-	if (initialLoadBtn) {
-		initialLoadBtn.style.pointerEvents = 'auto';
-		initialLoadBtn.style.touchAction = 'manipulation';
-		initialLoadBtn.disabled = false;
-	}
-	if (initialFleeBtn) {
-		initialFleeBtn.style.pointerEvents = 'auto';
-		initialFleeBtn.style.touchAction = 'manipulation';
-		initialFleeBtn.disabled = false;
-	}
-	
-	// 延遲執行，確保 DOM 完全載入後再次檢查
-	setTimeout(() => {
-		window.enableAllButtonsTouch();
-	}, 500);
 	
 	// 事件
-	addTouchClickEvent(spinBtn, ()=>{
+	spinBtn.addEventListener('click', ()=>{
 		if (!game.inBattle) {
 			showMessage('目前不在戰鬥中，無法使用旋轉。');
 			return;
@@ -3317,12 +3226,12 @@ function startAutoSpinLoop() {
 		startSpin();
 	});
 
-	addTouchClickEvent(stopBtn, ()=>{
+	stopBtn.addEventListener('click', ()=>{
 		stopSequentially();
 	});
 
-	// 簡單的輸入處理（保留用戶原本的指令輸入框功能）- 使用觸控友善事件
-	addTouchClickEvent(button, function() {
+	// 簡單的輸入處理（保留用戶原本的指令輸入框功能）
+	button.addEventListener('click', function() {
 		const cmd = input.value.trim();
 		if (!cmd) { showMessage('請輸入指令。'); return; }
 		showMessage(`你輸入了：${cmd}`);
@@ -3337,14 +3246,14 @@ function startAutoSpinLoop() {
 	const moveFront = document.getElementById('move-front');
 	const moveLeft = document.getElementById('move-left');
 	const moveRight = document.getElementById('move-right');
-	addTouchClickEvent(moveFront, ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.moveStep('前'); });
-	addTouchClickEvent(moveLeft, ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.moveStep('左'); });
-	addTouchClickEvent(moveRight, ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.moveStep('右'); });
+	if (moveFront) moveFront.addEventListener('click', ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.moveStep('前'); });
+	if (moveLeft) moveLeft.addEventListener('click', ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.moveStep('左'); });
+	if (moveRight) moveRight.addEventListener('click', ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.moveStep('右'); });
 
 	// 裝備按鈕行為
 	const closeEquip = document.getElementById('close-equip');
 	if (closeEquip) {
-		addTouchClickEvent(closeEquip, ()=> { 
+		closeEquip.addEventListener('click', ()=> { 
 			const p = document.getElementById('equipment-panel'); 
 			if (p) p.style.display = 'none'; 
 		});
@@ -3355,11 +3264,11 @@ function startAutoSpinLoop() {
 			// panels generated in updateStatus -> look for these classes
 			Array.from(document.querySelectorAll('.unequip-btn')).forEach(b=>{
 				if (b._bound) return; b._bound = true;
-				addTouchClickEvent(b, ()=>{ const slot = b.getAttribute('data-slot'); game.unequipItem(slot); });
+				b.addEventListener('click', ()=>{ const slot = b.getAttribute('data-slot'); game.unequipItem(slot); });
 			});
 			Array.from(document.querySelectorAll('.open-equip-btn')).forEach(b=>{
 				if (b._bound) return; b._bound = true;
-				addTouchClickEvent(b, ()=>{ const slot = b.getAttribute('data-slot'); game.showEquipmentPanel(slot); });
+				b.addEventListener('click', ()=>{ const slot = b.getAttribute('data-slot'); game.showEquipmentPanel(slot); });
 			});
 		}
 		bindStatusEquipButtons();
@@ -3367,7 +3276,7 @@ function startAutoSpinLoop() {
 	// 自動旋轉與逃跑按鈕綁定
 	const autoBtn = document.getElementById('auto-spin-btn');
 	if (autoBtn) {
-		addTouchClickEvent(autoBtn, ()=>{
+		autoBtn.addEventListener('click', ()=>{
 			if (!game.inBattle) {
 				showMessage('目前不在戰鬥中，無法使用自動旋轉。');
 				return;
@@ -3379,7 +3288,7 @@ function startAutoSpinLoop() {
 	}
 	const fleeBtn = document.getElementById('flee-btn');
 	if (fleeBtn) {
-		addTouchClickEvent(fleeBtn, ()=>{ game.attemptFlee(); });
+		fleeBtn.addEventListener('click', ()=>{ game.attemptFlee(); });
 	}
 
 	// 音樂控制按鈕
@@ -3387,7 +3296,7 @@ function startAutoSpinLoop() {
 	const volumeSlider = document.getElementById('volume-slider');
 	
 	if (musicToggle) {
-		addTouchClickEvent(musicToggle, ()=> {
+		musicToggle.addEventListener('click', ()=> {
 			MusicSystem.toggle();
 			updateUILanguage(); // 更新按鈕文字的多語言
 		});
@@ -3414,7 +3323,7 @@ function startAutoSpinLoop() {
 	const loadBtn = document.getElementById('load-btn');
 
 	if (saveBtn) {
-		addTouchClickEvent(saveBtn, ()=>{
+		saveBtn.addEventListener('click', ()=>{
 		try {
 			const saveData = {
 				player: game.player,
@@ -3450,7 +3359,7 @@ function startAutoSpinLoop() {
 	}
 
 	if (loadBtn) {
-		addTouchClickEvent(loadBtn, ()=>{
+		loadBtn.addEventListener('click', ()=>{
 		try {
 			const saveData = localStorage.getItem('egypt_adventures_save');
 			if (!saveData) {
