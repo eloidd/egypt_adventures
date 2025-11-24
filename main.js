@@ -3315,9 +3315,9 @@ function startAutoSpinLoop() {
 	const loadBtn = document.getElementById('load-btn');
 
 	if (saveBtn) {
-		saveBtn.addEventListener('click', ()=>{
-		try {
-			const saveData = {
+		saveBtn.addEventListener('click', ()=> {
+			try {
+				const saveData = {
 				player: game.player,
 				enemy: game.enemy,
 				inBattle: game.inBattle,
@@ -3343,17 +3343,17 @@ function startAutoSpinLoop() {
 			} else {
 				showMessage('⚠️ 儲存可能失敗，請檢查瀏覽器設定是否允許 localStorage');
 			}
-		} catch (e) {
-			showMessage('❌ 儲存失敗：' + e.message);
-			console.error('Save error:', e);
-		}
+			} catch (e) {
+				showMessage('❌ 儲存失敗：' + e.message);
+				console.error('Save error:', e);
+			}
 		});
 	}
 
 	if (loadBtn) {
-		loadBtn.addEventListener('click', ()=>{
-		try {
-			const saveData = localStorage.getItem('egypt_adventures_save');
+		loadBtn.addEventListener('click', ()=> {
+			try {
+				const saveData = localStorage.getItem('egypt_adventures_save');
 			if (!saveData) {
 				showMessage('❌ 找不到存檔！請先點擊「儲存」按鈕建立存檔。');
 				return;
@@ -3393,9 +3393,9 @@ function startAutoSpinLoop() {
 			game.updateStatus();
 			const saveDate = new Date(data.timestamp);
 			showMessage(`📂 讀取成功！存檔時間：${saveDate.toLocaleString('zh-TW')}`);
-		} catch (e) {
-			showMessage('❌ 讀取失敗：' + e.message);
-		}
+			} catch (e) {
+				showMessage('❌ 讀取失敗：' + e.message);
+			}
 		});
 	}
 
