@@ -3206,19 +3206,34 @@ function startAutoSpinLoop() {
 	function addTouchClickEvent(element, callback) {
 		if (!element) return;
 		let touchHandled = false;
+		let touchStartTime = 0;
 		
-		// 使用 touchstart 而非 touchend 以提高響應速度
+		// 使用 touchend 以獲得更好的兼容性
 		element.addEventListener('touchstart', (e) => {
-			e.preventDefault();
-			e.stopPropagation();
-			touchHandled = true;
-			callback();
-			setTimeout(() => { touchHandled = false; }, 300);
+			// 檢查元素是否被禁用
+			if (element.disabled) return;
+			touchStartTime = Date.now();
+		}, { passive: true });
+		
+		element.addEventListener('touchend', (e) => {
+			// 檢查元素是否被禁用
+			if (element.disabled) return;
+			// 確保是快速點擊（非滑動）
+			if (Date.now() - touchStartTime < 500) {
+				e.preventDefault();
+				e.stopPropagation();
+				touchHandled = true;
+				callback();
+				setTimeout(() => { touchHandled = false; }, 300);
+			}
 		}, { passive: false });
 		
 		element.addEventListener('click', (e) => {
+			// 檢查元素是否被禁用
+			if (element.disabled) return;
 			if (!touchHandled) {
 				e.preventDefault();
+				e.stopPropagation();
 				callback();
 			}
 		});
@@ -3243,6 +3258,17 @@ function startAutoSpinLoop() {
 		}
 	};
 
+	// 全局函數：強制啟用所有非禁用按鈕的觸控
+	window.enableAllButtonsTouch = function() {
+		const allButtons = document.querySelectorAll('button:not([disabled])');
+		allButtons.forEach(btn => {
+			btn.style.pointerEvents = 'auto';
+			btn.style.touchAction = 'manipulation';
+			btn.style.webkitTapHighlightColor = 'rgba(0, 0, 0, 0.1)';
+			console.log('Button enabled:', btn.id || btn.textContent);
+		});
+	};
+
 	// 確保按鈕初始狀態正確
 	spinBtn.style.pointerEvents = 'auto';
 	spinBtn.style.touchAction = 'manipulation';
@@ -3250,7 +3276,34 @@ function startAutoSpinLoop() {
 	if (autoSpinBtn) {
 		autoSpinBtn.style.pointerEvents = 'auto';
 		autoSpinBtn.style.touchAction = 'manipulation';
+		autoSpinBtn.disabled = false; // 確保初始不被禁用
 	}
+	
+	// 確保所有功能按鈕（儲存、讀取、逃離）都可觸控
+	const initialSaveBtn = document.getElementById('save-btn');
+	const initialLoadBtn = document.getElementById('load-btn');
+	const initialFleeBtn = document.getElementById('flee-btn');
+	
+	if (initialSaveBtn) {
+		initialSaveBtn.style.pointerEvents = 'auto';
+		initialSaveBtn.style.touchAction = 'manipulation';
+		initialSaveBtn.disabled = false;
+	}
+	if (initialLoadBtn) {
+		initialLoadBtn.style.pointerEvents = 'auto';
+		initialLoadBtn.style.touchAction = 'manipulation';
+		initialLoadBtn.disabled = false;
+	}
+	if (initialFleeBtn) {
+		initialFleeBtn.style.pointerEvents = 'auto';
+		initialFleeBtn.style.touchAction = 'manipulation';
+		initialFleeBtn.disabled = false;
+	}
+	
+	// 延遲執行，確保 DOM 完全載入後再次檢查
+	setTimeout(() => {
+		window.enableAllButtonsTouch();
+	}, 500);
 	
 	// 事件
 	addTouchClickEvent(spinBtn, ()=>{
