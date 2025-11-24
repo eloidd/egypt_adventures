@@ -116,15 +116,24 @@ V:Drums
 [C2 ^C ^C C] | [X2 ^z X2 ^z] ||
 `,
 	
-	// ABC 記譜 - 戰鬥音樂（僅使用主旋律，簡化版本）
+	// ABC 記譜 - 戰鬥音樂（完整四聲部編制）
 	battleMusic: `
-X:10
-T:Egypt_Battle_Full_32bars
+X:102
+T:Egypt_Stage_Battle
+%%section BATTLE
 M:4/4
 L:1/8
-Q:220
+Q:188
 K:Aphr
-% LEAD MELODY
+
+V:Lead clef=treble
+V:Harmony clef=treble
+V:Bass clef=bass
+V:Drums clef=perc
+%%score (Lead Harmony Bass Drums)
+
+% --- LEAD ---
+V:Lead
 A2 C2 A2 C2 | D4 C2 B,2 | A2 C2 D2 E2 | F4 E2 D2 |
 C2 E2 C2 E2 | F4 E2 D2 | A4 G2 F2 | E6 z2 |
 C'2 B2 A2 G2 | F4 E2 D2 | C2 E2 A2 G2 | F4 E2 C2 |
@@ -133,6 +142,39 @@ E2 F2 G2 A2 | C'4 B2 A2 | A2 G2 F2 E2 | D4 C2 B,2 |
 A2 C2 A2 C2 | D4 C2 B,2 | A2 C2 D2 E2 | F4 E2 D2 |
 A4 C2 D2 | E4 F2 E2 | A4 G2 F2 | E4 C2 B,2 |
 A4 C2 E2 | F4 G2 A2 | G4 F2 E2 | A8 ||
+
+% --- HARMONY ---
+V:Harmony
+E2 A2 G2 A2 | F4 E2 D2 | E2 G2 A2 B2 | A4 G2 F2 |
+A2 A2 F2 A2 | G4 F2 E2 | C'4 B2 A2 | G6 z2 |
+A2 G2 F2 E2 | D4 C2 B,2 | E2 G2 C'2 B2 | A4 G2 E2 |
+C'2 B2 A2 G2 | F2 E2 D2 C2 | E2 F2 G2 A2 | C'6 z2 |
+A2 B2 C'2 D'2 | E'4 D'2 C'2 | C'2 B2 A2 G2 | F4 E2 D2 |
+E2 A2 C'2 B2 | A4 G2 F2 | E2 G2 A2 B2 | C'4 B2 A2 |
+E2 A2 G2 A2 | F4 E2 D2 | E2 G2 A2 B2 | A4 G2 F2 |
+A2 C'2 B2 A2 | G2 F2 E2 D2 | F2 E2 D2 C2 | A8 ||
+
+% --- BASS ---
+V:Bass
+[A,2 A2] [A,2 A2] | [D2 D2] [C2 C2] |
+[A,2 A2] [C2 C2] | [D2 D2] [E2 E2] |
+[F2 F2] [E2 E2] | [A,2 A2] [G2 G2] |
+[F2 F2] [E2 E2] | [A,4 A,4] |
+[A,2 A2] [A,2 A2] | [D2 D2] [C2 C2] |
+[A,2 A2] [C2 C2] | [D2 D2] [E2 E2] |
+[F2 F2] [E2 E2] | [A,2 A2] [G2 G2] |
+[F2 F2] [E2 E2] | [A,4 A,4] ||
+
+% --- DRUMS ---
+V:Drums
+[C2 ^z C2 ^z] | [X2 ^z X2 ^z] |
+[C2 ^C ^C C] | [X2 ^z X2 ^z] |
+[C2 ^z C2 ^z] | [X2 ^z X2 ^z] |
+[C2 ^C ^C C] | [X2 ^z X2 ^z] |
+[C2 ^z C2 ^z] | [X2 ^z X2 ^z] |
+[C2 ^C ^C C] | [X2 ^z X2 ^z] |
+[C2 ^z C2 ^z] | [X2 ^z X2 ^z] |
+[C2 ^C ^C C] | [X2 ^z X2 ^z] ||
 `,
 	
 	// ABC 記譜 - 勝利音樂（埃及風格勝利號角）
