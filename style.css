@@ -1003,6 +1003,9 @@ body::after {
     #language-select {
         padding: 6px 10px !important;
         font-size: 14px !important;
+        position: relative;
+        z-index: 100;
+        touch-action: manipulation;
     }
     
     /* 遊戲輸出區域 - 放大文字 */
@@ -1035,72 +1038,86 @@ body::after {
         letter-spacing: 4px;
     }
     
-    /* 戰鬥區域 - 改為包裹式布局，角色和敵人並列 */
+    /* 戰鬥區域 - 上半部並列角色和敵人，下半部拉霸機 */
     #battle-area {
         display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
+        flex-direction: column;
+        gap: 10px;
         padding: 8px;
     }
     
-    /* 角色/敵人狀態框 - 並列顯示，各佔50%減去間距 */
+    /* 創建一個容器讓角色和敵人並列 */
+    #player-status,
+    #enemy-status {
+        display: inline-block;
+        vertical-align: top;
+        width: calc(50% - 5px) !important;
+        max-width: calc(50% - 5px) !important;
+        float: left;
+    }
+    
+    #player-status {
+        margin-right: 10px;
+    }
+    
+    /* 角色/敵人狀態框 - 並列顯示 */
     .status-box-side {
-        flex: 1 1 calc(50% - 4px);
-        width: calc(50% - 4px);
-        max-width: calc(50% - 4px);
+        flex: none;
+        width: 100%;
+        max-width: 100%;
         padding: 6px;
         min-height: 110px;
-        font-size: 0.8em;
+        font-size: 0.78em;
         box-sizing: border-box;
     }
     
     .status-box-side .stat-label {
-        font-size: 0.9em;
+        font-size: 0.88em;
         margin-bottom: 3px;
     }
     
     .stats-row {
-        font-size: 0.78em;
+        font-size: 0.75em;
         gap: 3px;
         flex-wrap: wrap;
     }
     
     .stats-row > * {
         flex: 1 1 auto;
-        min-width: 42%;
-        font-size: 0.95em;
+        min-width: 40%;
+        font-size: 0.9em;
     }
     
     /* HP/XP 條文字大小調整 */
     .hp-row,
     .xp-row {
-        font-size: 0.9em;
-        margin-bottom: 4px;
+        font-size: 0.88em;
+        margin-bottom: 3px;
     }
     
-    /* 拉霸機區域佔滿整行 */
-    #slot-center {
-        flex: 1 1 100%;
-        width: 100%;
-        gap: 10px;
-    }
-    
-    /* 拉霸機區域優化 */
+    /* 拉霸機區域佔滿整行，並清除浮動 */
     #slot-center {
         width: 100%;
-        gap: 10px;
+        clear: both;
+        gap: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
     
     #slot-machine {
-        gap: 5px;
-        padding: 35px 40px;
+        gap: 4px;
+        padding: 25px 20px;
         flex-wrap: nowrap;
+        margin: 0 auto;
+        width: auto;
+        display: flex;
     }
     
     #slot-machine::before,
     #slot-machine::after {
-        font-size: 16px;
-        letter-spacing: 12px;
+        font-size: 14px;
+        letter-spacing: 10px;
     }
     
     /* 隱藏拉霸機兩側的垂直象形文字 */
@@ -1112,38 +1129,41 @@ body::after {
     }
     
     .reel {
-        width: 70px;
-        height: 95px;
+        width: 65px;
+        height: 90px;
         border-width: 3px;
     }
     
     .symbol {
-        height: 47.5px;
-        line-height: 47.5px;
-        font-size: 26px;
+        height: 45px;
+        line-height: 45px;
+        font-size: 24px;
     }
     
     .reel::after {
-        top: 23.75px;
-        height: 47.5px;
+        top: 22.5px;
+        height: 45px;
         border-width: 2px;
     }
     
     /* 拉霸控制按鈕 - 改為橫向排列兩行 */
     #slot-controls {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
         margin-left: 0;
-        margin-top: 10px;
+        margin-top: 8px;
         width: 100%;
+        max-width: 320px;
     }
     
     #slot-controls button {
-        padding: 8px 10px;
-        font-size: 0.9em;
+        padding: 8px 6px;
+        font-size: 0.85em;
         min-width: auto;
         width: 100%;
+        position: relative;
+        z-index: 100;
     }
     
     /* 輪盤區域（如果使用） */
@@ -1240,6 +1260,8 @@ body::after {
         flex: none;
         width: 100%;
         margin-right: 0;
+        position: relative;
+        z-index: 100;
     }
     
     #map-info {
@@ -1261,6 +1283,12 @@ body::after {
     button {
         min-height: 42px;
         touch-action: manipulation;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        user-select: none;
+        -webkit-user-select: none;
+        position: relative;
+        z-index: 100;
+        cursor: pointer;
     }
     
     /* HP/XP 條調整 */
@@ -1302,42 +1330,51 @@ body::after {
         padding: 10px 15px;
     }
     
+    /* 保持角色和敵人並列 */
+    #player-status,
+    #enemy-status {
+        width: calc(50% - 5px) !important;
+        max-width: calc(50% - 5px) !important;
+    }
+    
     /* 拉霸機進一步縮小 */
     #slot-machine {
-        padding: 30px 25px;
+        padding: 20px 15px;
         gap: 3px;
     }
     
     .reel {
-        width: 60px;
-        height: 85px;
+        width: 58px;
+        height: 82px;
         border-width: 2px;
     }
     
     .symbol {
-        height: 42.5px;
-        line-height: 42.5px;
-        font-size: 22px;
+        height: 41px;
+        line-height: 41px;
+        font-size: 21px;
     }
     
     .reel::after {
-        top: 21.25px;
-        height: 42.5px;
+        top: 20.5px;
+        height: 41px;
         border-width: 2px;
     }
     
+    #slot-controls {
+        max-width: 280px;
+    }
+    
     #slot-controls button {
-        padding: 7px 8px;
-        font-size: 0.85em;
+        padding: 6px 5px;
+        font-size: 0.8em;
     }
     
     /* 狀態框 - 保持並列，進一步縮小 */
     .status-box-side {
         padding: 5px;
-        font-size: 0.75em;
+        font-size: 0.72em;
         min-height: 95px;
-        flex: 1 1 calc(50% - 4px);
-        max-width: calc(50% - 4px);
     }
     
     .status-box-side .stat-label {

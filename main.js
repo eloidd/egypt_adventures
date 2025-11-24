@@ -2714,8 +2714,25 @@ function startAutoSpinLoop() {
 		});
 	}
 
+	// 通用的觸控事件綁定函數（支援手機和桌面）
+	function addTouchClickEvent(element, callback) {
+		if (!element) return;
+		let touchHandled = false;
+		element.addEventListener('touchend', (e) => {
+			e.preventDefault();
+			touchHandled = true;
+			callback();
+			setTimeout(() => { touchHandled = false; }, 300);
+		}, { passive: false });
+		element.addEventListener('click', (e) => {
+			if (!touchHandled) {
+				callback();
+			}
+		});
+	}
+
 	// 事件
-	spinBtn.addEventListener('click', ()=>{
+	addTouchClickEvent(spinBtn, ()=>{
 		if (!game.inBattle) {
 			showMessage('目前不在戰鬥中，無法使用旋轉。');
 			return;
@@ -2726,7 +2743,7 @@ function startAutoSpinLoop() {
 		startSpin();
 	});
 
-	stopBtn.addEventListener('click', ()=>{
+	addTouchClickEvent(stopBtn, ()=>{
 		stopSequentially();
 	});
 
@@ -2746,15 +2763,15 @@ function startAutoSpinLoop() {
 	const moveFront = document.getElementById('move-front');
 	const moveLeft = document.getElementById('move-left');
 	const moveRight = document.getElementById('move-right');
-	if (moveFront) moveFront.addEventListener('click', ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.moveStep('前'); });
-	if (moveLeft) moveLeft.addEventListener('click', ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.moveStep('左'); });
-	if (moveRight) moveRight.addEventListener('click', ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.moveStep('右'); });
+	addTouchClickEvent(moveFront, ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.moveStep('前'); });
+	addTouchClickEvent(moveLeft, ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.moveStep('左'); });
+	addTouchClickEvent(moveRight, ()=> { if (game.inBattle) { showMessage('目前在戰鬥中，無法移動。'); return; } game.moveStep('右'); });
 
 	// 裝備按鈕行為
 	const equipBtn = document.getElementById('equip-btn');
 	const closeEquip = document.getElementById('close-equip');
-	if (equipBtn) equipBtn.addEventListener('click', ()=> { game.showEquipmentPanel(); });
-	if (closeEquip) closeEquip.addEventListener('click', ()=> { const p = document.getElementById('equipment-panel'); if (p) p.style.display = 'none'; });
+	addTouchClickEvent(equipBtn, ()=> { game.showEquipmentPanel(); });
+	addTouchClickEvent(closeEquip, ()=> { const p = document.getElementById('equipment-panel'); if (p) p.style.display = 'none'; });
 
 		// 每次更新狀態後會在 updateStatus() 內綁定這些按鈕，但初始也綁一次保險
 		function bindStatusEquipButtons() {
@@ -2772,7 +2789,7 @@ function startAutoSpinLoop() {
 
 	// 自動旋轉與逃跑按鈕綁定
 	const autoBtn = document.getElementById('auto-spin-btn');
-	if (autoBtn) autoBtn.addEventListener('click', ()=>{
+	addTouchClickEvent(autoBtn, ()=>{
 		if (!game.inBattle) {
 			showMessage('目前不在戰鬥中，無法使用自動旋轉。');
 			return;
@@ -2782,7 +2799,7 @@ function startAutoSpinLoop() {
 		if (autoSpin) startAutoSpinLoop(); else stopAutoSpinLoop();
 	});
 	const fleeBtn = document.getElementById('flee-btn');
-	if (fleeBtn) fleeBtn.addEventListener('click', ()=>{ game.attemptFlee(); });
+	addTouchClickEvent(fleeBtn, ()=>{ game.attemptFlee(); });
 
 	// 定期檢查戰鬥狀態，確保自動旋轉在戰鬥結束時停止
 	setInterval(() => {
@@ -2794,7 +2811,7 @@ function startAutoSpinLoop() {
 	const saveBtn = document.getElementById('save-btn');
 	const loadBtn = document.getElementById('load-btn');
 
-	if (saveBtn) saveBtn.addEventListener('click', ()=>{
+	addTouchClickEvent(saveBtn, ()=>{
 		try {
 			const saveData = {
 				player: game.player,
@@ -2828,7 +2845,7 @@ function startAutoSpinLoop() {
 		}
 	});
 
-	if (loadBtn) loadBtn.addEventListener('click', ()=>{
+	addTouchClickEvent(loadBtn, ()=>{
 		try {
 			const saveData = localStorage.getItem('egypt_adventures_save');
 			if (!saveData) {
