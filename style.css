@@ -663,6 +663,9 @@ button[disabled] {
     position: relative;
     z-index: 10;
 }
+.equip-row > div > div {
+    pointer-events: none !important;
+}
 .equip-row button {
     font-size: 0.85em;
     padding: 4px 10px;
@@ -679,7 +682,7 @@ button[disabled] {
     -webkit-user-select: none;
     pointer-events: auto !important;
     position: relative;
-    z-index: 1500 !important;
+    z-index: 2000 !important;
     min-height: 28px;
     min-width: 50px;
 }
