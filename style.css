@@ -1286,12 +1286,16 @@ button[disabled] {
         margin: 0 auto;
         width: auto;
         display: flex;
+        z-index: 1;
+        position: relative;
     }
     
     #slot-machine::before,
     #slot-machine::after {
         font-size: 14px;
         letter-spacing: 10px;
+        z-index: -1;
+        pointer-events: none;
     }
     
     /* 隱藏拉霸機兩側的垂直象形文字 */
@@ -1330,7 +1334,7 @@ button[disabled] {
         width: 100%;
         max-width: 320px;
         position: relative;
-        z-index: 300;
+        z-index: 1000 !important;
     }
     
     #slot-controls button {
@@ -1339,9 +1343,10 @@ button[disabled] {
         min-width: auto;
         width: 100%;
         position: relative;
-        z-index: 301;
+        z-index: 1001 !important;
         pointer-events: auto !important;
-        touch-action: manipulation;
+        touch-action: manipulation !important;
+        cursor: pointer !important;
     }
     
     /* 輪盤區域（如果使用） */
@@ -1367,7 +1372,8 @@ button[disabled] {
         pointer-events: auto !important;
         touch-action: manipulation !important;
         position: relative;
-        z-index: 301;
+        z-index: 1001 !important;
+        cursor: pointer !important;
     }
     
     /* 確保按鈕在啟用時可點擊 */
@@ -1485,8 +1491,8 @@ button[disabled] {
         user-select: none;
         -webkit-user-select: none;
         position: relative;
-        z-index: 150;
-        cursor: pointer;
+        z-index: 1000 !important;
+        cursor: pointer !important;
         pointer-events: auto !important;
     }
     
@@ -1497,9 +1503,10 @@ button[disabled] {
     #close-equip,
     #close-blackmarket {
         position: relative;
-        z-index: 301;
+        z-index: 1001 !important;
         pointer-events: auto !important;
         touch-action: manipulation !important;
+        cursor: pointer !important;
     }
     
     /* 被禁用的按鈕覆蓋上面的設置 */
@@ -1583,6 +1590,8 @@ button[disabled] {
     #slot-machine {
         padding: 20px 15px;
         gap: 3px;
+        z-index: 1;
+        position: relative;
     }
     
     .reel {
@@ -1606,16 +1615,17 @@ button[disabled] {
     #slot-controls {
         max-width: 280px;
         position: relative;
-        z-index: 300;
+        z-index: 1000 !important;
     }
     
     #slot-controls button {
         padding: 6px 5px;
         font-size: 0.8em;
         position: relative;
-        z-index: 301;
+        z-index: 1001 !important;
         pointer-events: auto !important;
         touch-action: manipulation !important;
+        cursor: pointer !important;
     }
     
     /* 確保所有戰鬥按鈕可點擊 */
@@ -1625,7 +1635,8 @@ button[disabled] {
     #flee-btn:not([disabled]) {
         pointer-events: auto !important;
         opacity: 1 !important;
-        z-index: 301;
+        z-index: 1001 !important;
+        cursor: pointer !important;
     }
     
     /* 狀態框 - 保持並列，進一步縮小 */
@@ -1691,9 +1702,10 @@ button[disabled] {
     #close-equip,
     #close-blackmarket {
         position: relative;
-        z-index: 301;
+        z-index: 1001 !important;
         pointer-events: auto !important;
         touch-action: manipulation !important;
+        cursor: pointer !important;
     }
 }
 
