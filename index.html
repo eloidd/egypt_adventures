@@ -18,7 +18,7 @@
                 </select>
             </div>
             <div id="music-controls" style="text-align: center; margin: 10px 0;">
-                <button id="music-toggle" style="padding: 8px 16px; font-size: 14px; border: 2px solid #8b6914; background: #f4e4c1; cursor: pointer; border-radius: 5px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                <button id="music-toggle" type="button" style="padding: 8px 16px; font-size: 14px; border: 2px solid #8b6914; background: #f4e4c1; cursor: pointer; border-radius: 5px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
                     🔇 <span data-i18n="musicOff">音樂：關閉</span>
                 </button>
                 <input type="range" id="volume-slider" min="0" max="100" value="50" style="width: 100px; vertical-align: middle; margin-left: 10px;">
@@ -43,9 +43,9 @@
             <div id="game-output"></div>
                 <div id="move-controls">
                     <div id="move-buttons">
-                        <button id="move-front" data-i18n="front">前</button>
-                        <button id="move-left" data-i18n="left">左</button>
-                        <button id="move-right" data-i18n="right">右</button>
+                        <button id="move-front" data-i18n="front" type="button">前</button>
+                        <button id="move-left" data-i18n="left" type="button">左</button>
+                        <button id="move-right" data-i18n="right" type="button">右</button>
                     </div>
                     <div id="map-info"><span data-i18n-prefix="remainingSteps">剩餘步數</span>: <span id="map-steps">30</span></div>
                 </div>
@@ -59,13 +59,13 @@
                              <div class="reel" id="reel-2"></div>
                          </div>
                          <div id="slot-controls">
-                             <button id="spin-btn" data-i18n="spin">旋轉</button>
-                             <button id="stop-btn" data-i18n="stop" disabled>停止</button>
-                             <button id="auto-spin-btn" data-i18n="autoSpin">自動旋轉</button>
-                             <button id="flee-btn" data-i18n="flee">逃離</button>
-                             <button id="equip-btn" data-i18n="equipment">裝備</button>
-                             <button id="save-btn" data-i18n="save" style="background:#2ecc71;">💾 儲存</button>
-                             <button id="load-btn" data-i18n="load" style="background:#3498db;">📂 讀取</button>
+                             <button id="spin-btn" data-i18n="spin" type="button">旋轉</button>
+                             <button id="stop-btn" data-i18n="stop" type="button" disabled>停止</button>
+                             <button id="auto-spin-btn" data-i18n="autoSpin" type="button">自動旋轉</button>
+                             <button id="flee-btn" data-i18n="flee" type="button">逃離</button>
+                             <button id="equip-btn" data-i18n="equipment" type="button">裝備</button>
+                             <button id="save-btn" data-i18n="save" type="button" style="background:#2ecc71;">💾 儲存</button>
+                             <button id="load-btn" data-i18n="load" type="button" style="background:#3498db;">📂 讀取</button>
                          </div>
                      </div>
                      <div id="enemy-status" class="status-box-side"></div>
@@ -73,17 +73,17 @@
                 <div id="equipment-panel" style="display:none; border:1px solid #666; padding:8px; background:#fff; position:fixed; right:20px; top:100px; width:240px; z-index:40;">
                     <h3 data-i18n="equipmentAndInventory">裝備與背包</h3>
                     <div id="equip-content" data-i18n="empty">空</div>
-                    <div style="margin-top:8px;"><button id="close-equip" data-i18n="close">關閉</button></div>
+                    <div style="margin-top:8px;"><button id="close-equip" data-i18n="close" type="button">關閉</button></div>
                 </div>
                 <div id="blackmarket-panel" style="display:none; border:1px solid #a33; padding:8px; background:#fff8f8; position:fixed; left:20px; top:100px; width:320px; z-index:45;">
                     <h3 data-i18n="blackMarket">黑市商人</h3>
                     <div id="blackmarket-desc" data-i18n="blackMarketDesc">黑市中可以以賭博方式購買裝備（普通～史詩），最多可購買兩件。請小心行事！</div>
                     <div id="blackmarket-items" style="margin-top:8px;"></div>
-                    <div style="margin-top:8px;"><button id="close-blackmarket" data-i18n="close">關閉</button></div>
+                    <div style="margin-top:8px;"><button id="close-blackmarket" data-i18n="close" type="button">關閉</button></div>
                 </div>
         </div>
         <input type="text" id="game-input" data-i18n-placeholder="inputPlaceholder" placeholder="請輸入指令...">
-        <button id="submit-btn" data-i18n="submit">送出</button>
+        <button id="submit-btn" data-i18n="submit" type="button">送出</button>
     </div>
     <script src="i18n.js"></script>
     <script src="main.js?v=20251123-10"></script>
