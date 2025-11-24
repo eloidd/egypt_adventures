@@ -17,6 +17,13 @@
                     <option value="fr">🇫🇷 Français</option>
                 </select>
             </div>
+            <div id="music-controls" style="text-align: center; margin: 10px 0;">
+                <button id="music-toggle" style="padding: 8px 16px; font-size: 14px; border: 2px solid #8b6914; background: #f4e4c1; cursor: pointer; border-radius: 5px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                    🔇 <span data-i18n="musicOff">音樂：關閉</span>
+                </button>
+                <input type="range" id="volume-slider" min="0" max="100" value="50" style="width: 100px; vertical-align: middle; margin-left: 10px;">
+                <span id="volume-display" style="font-size: 12px; margin-left: 5px;">50%</span>
+            </div>
             <aside id="sidebar">
                 <h2 data-i18n="symbolGuide">符號說明</h2>
                 <ul>

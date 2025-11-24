@@ -1,9 +1,282 @@
+// ===== 音樂系統 =====
+const MusicSystem = {
+	audioContext: null,
+	isPlaying: false,
+	volume: 0.5,
+	currentNote: null,
+	isEnabled: false,
+	
+	// ABC 記譜 - Egypt_Stage_32bars
+	abcNotation: `
+X:1
+T:Egypt_Stage_32bars
+M:4/4
+L:1/8
+Q:160
+K:Aphr
+% Lead melody in A Phrygian Dominant – Egyptian vibe
+[V:Lead]
+
+% --- Section A (bars 1–8): Main Theme ---
+A4 C2 D2 | E4 F2 E2 | A4 G2 F2 | E4 C2 B,2 |
+A4 C2 D2 | E4 F2 A2 | G4 F2 E2 | A6 z2 |
+
+% --- Section B (bars 9–16): Bright Desert Motif ---
+C'4 B2 A2 | G4 F2 E2 | F4 E2 D2 | C4 B,2 A,2 |
+A4 C2 D2 | E4 F2 E2 | G4 F2 E2 | A6 z2 |
+
+% --- Section C (bars 17–24): Mysterious Pyramid Passage ---
+E4 F2 G2 | A4 G2 F2 | C'4 B2 A2 | G4 F2 E2 |
+D4 C2 B,2 | A,4 B,2 C2 | D4 E2 F2 | G6 z2 |
+
+% --- Section D (bars 25–32): Return + Climax ---
+A4 C2 D2 | E4 F2 E2 | A4 G2 F2 | E4 C2 B,2 |
+A4 C2 E2 | F4 G2 A2 | G4 F2 E2 | A8 ||
+`,
+	
+	init() {
+		// 初始化 Web Audio API
+		if (!this.audioContext) {
+			this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+		}
+		
+		// 從 localStorage 讀取設定
+		const saved = localStorage.getItem('musicEnabled');
+		const savedVolume = localStorage.getItem('musicVolume');
+		this.isEnabled = saved === 'true';
+		this.volume = savedVolume ? parseFloat(savedVolume) : 0.5;
+		
+		// 解析 ABC 記譜
+		this.parsedMusic = this.parseABC(this.abcNotation);
+		
+		this.updateUI();
+	},
+	
+	// 音符頻率對照表（基於 A Phrygian Dominant 音階）
+	noteFrequencies: {
+		// 低八度 (大寫 + 逗號)
+		'A,': 110.00, 'B,': 123.47, 'C,': 65.41, 'D,': 73.42, 'E,': 82.41, 'F,': 87.31, 'G,': 98.00,
+		// 中八度 (大寫字母)
+		'A': 220.00, 'B': 246.94, 'C': 261.63, 'D': 293.66, 'E': 329.63, 'F': 349.23, 'G': 392.00,
+		// 高八度 (小寫字母)
+		'a': 440.00, 'b': 493.88, 'c': 523.25, 'd': 587.33, 'e': 659.25, 'f': 698.46, 'g': 783.99,
+		// 更高八度 (小寫 + 撇號)
+		"c'": 1046.50, "d'": 1174.66, "e'": 1318.51, "f'": 1396.91, "g'": 1567.98, "a'": 880.00, "b'": 987.77,
+		// 休止符
+		'z': 0
+	},
+	
+	parseABC(abc) {
+		const lines = abc.split('\n').filter(line => !line.trim().startsWith('%') && line.trim().length > 0);
+		const notes = [];
+		let tempo = 120; // 預設速度
+		let defaultLength = 8; // 預設八分音符
+		
+		// 解析標頭資訊
+		for (const line of lines) {
+			if (line.startsWith('Q:')) {
+				const match = line.match(/Q:(\d+)/);
+				if (match) tempo = parseInt(match[1]);
+			}
+			if (line.startsWith('L:')) {
+				const match = line.match(/L:1\/(\d+)/);
+				if (match) defaultLength = parseInt(match[1]);
+			}
+		}
+		
+		// 解析音符行
+		for (const line of lines) {
+			if (line.startsWith('X:') || line.startsWith('T:') || line.startsWith('M:') || 
+			    line.startsWith('L:') || line.startsWith('Q:') || line.startsWith('K:') || 
+			    line.startsWith('[V:') || line.includes('---')) {
+				continue;
+			}
+			
+			// 移除小節線和其他符號
+			const cleanLine = line.replace(/\|/g, ' ').replace(/:/g, '').trim();
+			if (!cleanLine) continue;
+			
+			// 解析音符（支援 ABC 記譜中的 C' 高音表示法）
+			const tokens = cleanLine.match(/([A-Ga-g][',]*|z)(\d*)/g);
+			if (!tokens) continue;
+			
+			for (const token of tokens) {
+				const match = token.match(/([A-Ga-g][',]*|z)(\d*)/);
+				if (match) {
+					let noteName = match[1];
+					let duration = match[2] ? parseInt(match[2]) : 1;
+					
+					// ABC 記譜規則：
+					// A,B,C, = 低八度（帶逗號）
+					// A B C D E F G = 中八度（大寫）
+					// a b c d e f g = 高八度（小寫）
+					// c' d' = 更高八度（小寫+撇號）
+					
+					// 計算實際持續時間（秒）
+					const beatDuration = 60 / tempo; // 一拍的秒數
+					const noteDuration = (beatDuration * 4 * duration) / defaultLength;
+					
+					const frequency = this.noteFrequencies[noteName] || 0;
+					
+					notes.push({
+						note: noteName,
+						duration: noteDuration,
+						frequency: frequency
+					});
+				}
+			}
+		}
+		
+		return { notes, tempo };
+	},
+	
+	toggle() {
+		this.isEnabled = !this.isEnabled;
+		localStorage.setItem('musicEnabled', this.isEnabled);
+		
+		if (this.isEnabled) {
+			// 確保 AudioContext 已恢復（瀏覽器安全要求）
+			if (this.audioContext.state === 'suspended') {
+				this.audioContext.resume().then(() => {
+					this.play();
+				});
+			} else {
+				this.play();
+			}
+		} else {
+			this.stop();
+		}
+		
+		this.updateUI();
+	},
+	
+	setVolume(value) {
+		this.volume = value / 100;
+		localStorage.setItem('musicVolume', this.volume);
+		// 如果正在播放，更新音量
+		if (this.currentNote && this.currentNote.gainNode) {
+			this.currentNote.gainNode.gain.value = this.volume;
+		}
+	},
+	
+	play() {
+		if (!this.isEnabled || this.isPlaying || !this.parsedMusic) return;
+		this.isPlaying = true;
+		this.currentNoteIndex = 0;
+		this.playNextNote();
+		console.log('Music playing... Total notes:', this.parsedMusic.notes.length);
+	},
+	
+	playNextNote() {
+		if (!this.isPlaying || !this.parsedMusic) return;
+		
+		const notes = this.parsedMusic.notes;
+		if (this.currentNoteIndex >= notes.length) {
+			// 樂曲結束，循環播放
+			this.currentNoteIndex = 0;
+		}
+		
+		const noteData = notes[this.currentNoteIndex];
+		this.currentNoteIndex++;
+		
+		if (noteData.frequency > 0) {
+			// 播放音符
+			this.playTone(noteData.frequency, noteData.duration);
+		}
+		
+		// 安排下一個音符
+		this.nextNoteTimeout = setTimeout(() => {
+			this.playNextNote();
+		}, noteData.duration * 1000);
+	},
+	
+	playTone(frequency, duration) {
+		try {
+			const oscillator = this.audioContext.createOscillator();
+			const gainNode = this.audioContext.createGain();
+			
+			oscillator.connect(gainNode);
+			gainNode.connect(this.audioContext.destination);
+			
+			// 使用三角波創造較柔和的音色
+			oscillator.type = 'triangle';
+			oscillator.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
+			
+			// 設定音量包絡（ADSR）
+			const now = this.audioContext.currentTime;
+			const attackTime = 0.02;
+			const releaseTime = 0.1;
+			
+			gainNode.gain.setValueAtTime(0, now);
+			gainNode.gain.linearRampToValueAtTime(this.volume, now + attackTime);
+			gainNode.gain.setValueAtTime(this.volume, now + duration - releaseTime);
+			gainNode.gain.linearRampToValueAtTime(0, now + duration);
+			
+			oscillator.start(now);
+			oscillator.stop(now + duration);
+			
+			this.currentNote = { oscillator, gainNode };
+		} catch (e) {
+			console.error('Error playing tone:', e);
+		}
+	},
+	
+	stop() {
+		this.isPlaying = false;
+		
+		if (this.nextNoteTimeout) {
+			clearTimeout(this.nextNoteTimeout);
+			this.nextNoteTimeout = null;
+		}
+		
+		if (this.currentNote) {
+			try {
+				if (this.currentNote.oscillator) {
+					this.currentNote.oscillator.stop();
+				}
+			} catch (e) {
+				// 音符可能已經停止
+			}
+			this.currentNote = null;
+		}
+		
+		console.log('Music stopped');
+	},
+	
+	updateUI() {
+		const toggleBtn = document.getElementById('music-toggle');
+		const volumeSlider = document.getElementById('volume-slider');
+		const volumeDisplay = document.getElementById('volume-display');
+		
+		if (toggleBtn) {
+			if (this.isEnabled) {
+				toggleBtn.innerHTML = '🔊 <span data-i18n="musicOn">音樂：開啟</span>';
+				toggleBtn.style.background = '#d4edda';
+			} else {
+				toggleBtn.innerHTML = '🔇 <span data-i18n="musicOff">音樂：關閉</span>';
+				toggleBtn.style.background = '#f4e4c1';
+			}
+		}
+		
+		if (volumeSlider) {
+			volumeSlider.value = this.volume * 100;
+		}
+		
+		if (volumeDisplay) {
+			volumeDisplay.textContent = Math.round(this.volume * 100) + '%';
+		}
+	}
+};
+
 document.addEventListener('DOMContentLoaded', function() {
 	const output = document.getElementById('game-output');
 	const input = document.getElementById('game-input');
 	const button = document.getElementById('submit-btn');
 	const spinBtn = document.getElementById('spin-btn');
 	const stopBtn = document.getElementById('stop-btn');
+	
+	// 初始化音樂系統
+	MusicSystem.init();
 
 	// 初始化語言選擇器
 	const languageSelect = document.getElementById('language-select');
@@ -2471,6 +2744,17 @@ function genEnemyName(type) {
 	
 	// 顯示初始方向提示
 	game.generateDirectionHints();
+	
+	// 全局遊戲引用
+	window.game = game;
+	
+	// 如果音樂已啟用，嘗試播放（可能需要用戶互動）
+	if (MusicSystem.isEnabled) {
+		// 延遲播放以確保頁面完全載入
+		setTimeout(() => {
+			MusicSystem.play();
+		}, 500);
+	}
 
 	// 控制旋轉的 interval
 	const reelState = reels.map(()=>({interval:null, spinning:false}));
@@ -2864,6 +3148,27 @@ function startAutoSpinLoop() {
 	});
 	const fleeBtn = document.getElementById('flee-btn');
 	addTouchClickEvent(fleeBtn, ()=>{ game.attemptFlee(); });
+
+	// 音樂控制按鈕
+	const musicToggle = document.getElementById('music-toggle');
+	const volumeSlider = document.getElementById('volume-slider');
+	
+	if (musicToggle) {
+		addTouchClickEvent(musicToggle, ()=> {
+			MusicSystem.toggle();
+			updateUILanguage(); // 更新按鈕文字的多語言
+		});
+	}
+	
+	if (volumeSlider) {
+		volumeSlider.addEventListener('input', (e) => {
+			MusicSystem.setVolume(e.target.value);
+			const volumeDisplay = document.getElementById('volume-display');
+			if (volumeDisplay) {
+				volumeDisplay.textContent = e.target.value + '%';
+			}
+		});
+	}
 
 	// 定期檢查戰鬥狀態，確保自動旋轉在戰鬥結束時停止
 	setInterval(() => {

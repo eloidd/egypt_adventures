@@ -28,6 +28,10 @@ const TRANSLATIONS = {
 		submit: '送出',
 		close: '關閉',
 		
+		// Music controls
+		musicOn: '音樂：開啟',
+		musicOff: '音樂：關閉',
+		
 		// Equipment panel
 		equipmentAndInventory: '裝備與背包',
 		empty: '空',
@@ -414,6 +418,10 @@ const TRANSLATIONS = {
 		submit: 'Submit',
 		close: 'Close',
 		
+		// Music controls
+		musicOn: 'Music: ON',
+		musicOff: 'Music: OFF',
+		
 		// Equipment panel
 		equipmentAndInventory: 'Equipment & Inventory',
 		empty: 'Empty',
@@ -799,6 +807,10 @@ const TRANSLATIONS = {
 		load: '📂 Charger',
 		submit: 'Envoyer',
 		close: 'Fermer',
+		
+		// Music controls
+		musicOn: 'Musique: ON',
+		musicOff: 'Musique: OFF',
 		
 		// Equipment panel
 		equipmentAndInventory: 'Équipement & Inventaire',
