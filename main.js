@@ -520,6 +520,15 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 	// 初始化音樂系統
 	MusicSystem.init();
+	
+	// 調試信息：顯示螢幕尺寸和符號設定
+	console.log('=== 螢幕尺寸診斷 ===');
+	console.log(`視口寬度: ${window.innerWidth}px`);
+	console.log(`視口高度: ${window.innerHeight}px`);
+	console.log(`設備像素比: ${window.devicePixelRatio}`);
+	console.log(`符號高度: ${getSymbolHeight()}px`);
+	console.log(`高亮框位置: ${getHighlightTop()}px`);
+	console.log(`UserAgent: ${navigator.userAgent}`);
 
 	// 初始化語言選擇器
 	const languageSelect = document.getElementById('language-select');
@@ -598,15 +607,21 @@ function chooseEvent() {
 	// 動態獲取符號高度，根據螢幕寬度適配（與 CSS 同步）
 	function getSymbolHeight() {
 		const width = window.innerWidth;
-		if (width <= 400) return 41; // 極小螢幕
-		if (width <= 600) return 60; // 手機版
-		return 60; // 桌面版
+		// iPhone 15: 390px, iPhone 15 Plus: 428px, iPhone 15 Pro Max: 430px
+		// 極小螢幕（<= 400px）使用 41px
+		if (width <= 400) return 41;
+		// 手機版（<= 600px）使用 60px
+		if (width <= 600) return 60;
+		// 桌面版使用 60px
+		return 60;
 	}
 	// 動態獲取高亮框頂部位置（與 CSS 同步）
 	function getHighlightTop() {
 		const width = window.innerWidth;
-		if (width <= 400) return 20.5; // 極小螢幕：41px 符號的一半減去一半
-		return 30; // 其他：60px 符號的一半
+		// 極小螢幕：41px 符號，高亮框在 20.5px
+		if (width <= 400) return 20.5;
+		// 其他：60px 符號，高亮框在 30px
+		return 30;
 	}
 
 // 裝備與掉落樣本（基礎屬性，品質會在生成時添加）
@@ -750,7 +765,9 @@ function genEnemyName(type) {
 		// 使用動態符號高度和高亮框位置
 		const symbolHeight = getSymbolHeight();
 		const initialOffset = symbolHeight * SYMBOLS.length * 2;
+		// 確保 transform 設定正確，並清除任何可能的 CSS 預設值
 		strip.style.transform = `translateY(-${initialOffset}px)`;
+		strip.style.webkitTransform = `translateY(-${initialOffset}px)`;
 		}
 	}
 
@@ -3141,6 +3158,7 @@ function startAutoSpinLoop() {
 				const totalHeight = SYMBOLS.length * symbolHeight * 8; // repeats
 				if (reelState[i].anim.pos >= totalHeight) reelState[i].anim.pos -= totalHeight;
 				strip.style.transform = `translateY(-${reelState[i].anim.pos}px)`;
+				strip.style.webkitTransform = `translateY(-${reelState[i].anim.pos}px)`;
 				reelState[i].raf = requestAnimationFrame(loop);
 			};
 			reelState[i].raf = requestAnimationFrame(loop);
@@ -3201,12 +3219,14 @@ function startAutoSpinLoop() {
 						const ease = 1 - Math.pow(1 - t, 3); // easeOutCubic
 						const pos = currentPos + (targetPos - currentPos) * ease;
 						strip.style.transform = `translateY(-${pos}px)`;
+						strip.style.webkitTransform = `translateY(-${pos}px)`;
 						
 						if (t < 1) {
 							requestAnimationFrame(animate);
 						} else {
-							// 動畫結束，強制設定精確位置
+							// 動畫結束，強制設定精確位置（包括 webkit 前綴）
 							strip.style.transform = `translateY(-${targetPos}px)`;
+							strip.style.webkitTransform = `translateY(-${targetPos}px)`;
 							results[index] = targetSymbol;
 							console.log(`Reel ${index}: Animation complete, final position=${targetPos}px, symbol=${targetSymbol}`);
 							setTimeout(resolve, 50);
@@ -3216,12 +3236,16 @@ function startAutoSpinLoop() {
 				} else {
 					// 第二、三個輪軸：快速停止
 					strip.style.transition = 'transform 0.3s ease-out';
+					strip.style.webkitTransition = '-webkit-transform 0.3s ease-out';
 					strip.style.transform = `translateY(-${targetPos}px)`;
+					strip.style.webkitTransform = `translateY(-${targetPos}px)`;
 					
 					setTimeout(() => {
 						strip.style.transition = '';
-						// 再次確認位置
+						strip.style.webkitTransition = '';
+						// 再次確認位置（包括 webkit 前綴）
 						strip.style.transform = `translateY(-${targetPos}px)`;
+						strip.style.webkitTransform = `translateY(-${targetPos}px)`;
 						results[index] = targetSymbol;
 						console.log(`Reel ${index}: Quick stop complete, final position=${targetPos}px, symbol=${targetSymbol}`);
 						resolve();

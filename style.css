@@ -458,8 +458,7 @@ button[disabled] {
     will-change: transform;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
+    /* 不設定預設 transform，由 JavaScript 完全控制 */
 }
 .symbol {
     height: 60px;
