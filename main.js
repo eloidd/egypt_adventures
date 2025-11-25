@@ -3279,11 +3279,9 @@ function startAutoSpinLoop() {
 					// 在行動裝置上允許更大的容差（3px），以避免子像素或 matrix 計算誤差導致誤判
 					if (Math.abs(currentPos - alignedPos) > 3) {
 						console.warn(`Reel ${i}: Misaligned! Current=${currentPos}, should be=${alignedPos}`);
-						mobileDebug(`⚠️ 輪${i+1}未對齊: ${currentPos}px (應為${alignedPos}px)`, true);
 					}
 				}
 			}
-			mobileDebug(`位置檢查:${positionInfo}`);
 			
 			// 確保結果陣列完整
 			console.log('Final results array:', results);
@@ -3294,9 +3292,7 @@ function startAutoSpinLoop() {
 					if (!results[i]) results[i] = targetSymbols[i] || '⚔️';
 				}
 			}
-			
-			// 顯示結果到調試面板
-			mobileDebug(`🎰 插槽結果: ${results[0]} | ${results[1]} | ${results[2]}`);
+
 			showMessage(`插槽結果： ${results.join(' | ')}`);
 			
 			// 把結果傳給遊戲邏輯進行處理（attack/skill/defend/enemy）
@@ -3373,78 +3369,23 @@ function startAutoSpinLoop() {
 		});
 	}
 
-		// 手機調試輔助函數
-		function mobileDebug(msg, isError = false) {
-			const debugPanel = document.getElementById('mobile-debug');
-			const debugLog = document.getElementById('debug-log');
-			if (debugPanel && debugLog) {
-				
-				// 清除「等待操作...」提示
-				if (debugLog.textContent === '等待操作...') {
-					debugLog.innerHTML = '';
-				}
-				
-				const time = new Date().toLocaleTimeString('zh-TW');
-				const color = isError ? '#f00' : '#0f0';
-				const entry = document.createElement('div');
-				entry.style.color = color;
-				entry.style.marginBottom = '2px';
-				entry.textContent = `[${time}] ${msg}`;
-				debugLog.appendChild(entry);
-				
-				// 只保留最新15條
-				while (debugLog.children.length > 15) {
-					debugLog.removeChild(debugLog.firstChild);
-				}
-				debugLog.scrollTop = debugLog.scrollHeight;
-			}
-			console.log(msg);
-		}
-		
-		// 預設不自動顯示面板（只有在使用者按下切換按鈕或除錯模式時才顯示）
-		
 		// 使用事件委派處理裝備按鈕，避免重複綁定
 		document.addEventListener('click', function(e) {
-			// 使用 closest() 向上查找按鈕，解決手機觸控時點擊到子元素的問題
-			let target = e.target;
-			
-			// 調試：記錄所有點擊事件
-			const tagName = target.tagName;
-			const classes = Array.from(target.classList).join(',');
-			const text = target.textContent.trim().substring(0, 20);
-			mobileDebug(`點擊: <${tagName}> "${text}" [${classes}]`);
-			
-			// 如果是按鈕，顯示詳細資訊
-			if (tagName === 'BUTTON') {
-				const rect = target.getBoundingClientRect();
-				mobileDebug(`  位置: x=${Math.round(rect.left)}, y=${Math.round(rect.top)}, 寬=${Math.round(rect.width)}, 高=${Math.round(rect.height)}`);
-			}
-			
-			// 向上查找最近的按鈕元素（處理點擊到按鈕內部元素的情況）
-			const button = target.closest('.unequip-btn, .open-equip-btn');
-			
+			const button = e.target.closest('.unequip-btn, .open-equip-btn');
+
 			if (button) {
-				mobileDebug(`✓ 找到按鈕: ${button.className}`);
 				e.stopPropagation();
 				e.preventDefault();
-				
+
 				const slot = button.getAttribute('data-slot');
-				
+
 				if (button.classList.contains('unequip-btn')) {
-					mobileDebug(`✓ 卸下按鈕 slot=${slot}`);
 					if (slot) {
 						game.unequipItem(slot);
-						mobileDebug(`執行卸下: ${slot}`);
-					} else {
-						mobileDebug('錯誤: 卸下按鈕無slot屬性', true);
 					}
 				} else if (button.classList.contains('open-equip-btn')) {
-					mobileDebug(`✓ 裝備按鈕 slot=${slot}`);
 					if (slot) {
 						game.showEquipmentPanel(slot);
-						mobileDebug(`打開裝備面板: ${slot}`);
-					} else {
-						mobileDebug('錯誤: 裝備按鈕無slot屬性', true);
 					}
 				}
 			}

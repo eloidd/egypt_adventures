@@ -89,6 +89,7 @@ body::after {
     text-shadow: 0 3px 6px rgba(101, 67, 33, 0.6), 0 0 10px rgba(218, 165, 32, 0.4);
     z-index: 10;
     white-space: nowrap;
+    pointer-events: none;
 }
 
 /* 莎草紙捲軸底部裝飾 - 超清晰版 */
@@ -106,6 +107,7 @@ body::after {
     text-shadow: 0 3px 6px rgba(101, 67, 33, 0.6), 0 0 10px rgba(218, 165, 32, 0.4);
     z-index: 10;
     white-space: nowrap;
+    pointer-events: none;
 }
 
 #header-area {
@@ -683,6 +685,8 @@ button[disabled] {
     display: flex;
     gap: 4px;
     flex-wrap: wrap;
+    position: relative;
+    z-index: 100;
 }
 
 /* 裝備按鈕基礎樣式 */
@@ -1111,7 +1115,7 @@ button[disabled] {
     /* 確保面板在平板也有正確的 z-index */
     #equipment-panel,
     #blackmarket-panel {
-        z-index: 200 !important;
+        z-index: 9000 !important;
     }
     
     /* 確保獨立按鈕在平板版有正確設置 */
@@ -1129,6 +1133,12 @@ button[disabled] {
 
 /* ===== 手機響應式設計（最大 600px）===== */
 @media (max-width: 600px) {
+    /* 防止水平溢出 */
+    html, body {
+        overflow-x: hidden;
+        max-width: 100vw;
+    }
+
     /* 整體容器調整 */
     body {
         font-size: 14px;
@@ -1490,17 +1500,17 @@ button[disabled] {
         left: 5% !important;
         right: 5% !important;
         top: 80px !important;
-        z-index: 200 !important;
+        z-index: 9000 !important;
         max-height: 70vh !important;
         overflow-y: auto !important;
     }
-    
+
     /* 黑市面板 - 手機版全螢幕顯示 */
     #blackmarket-panel {
         width: 90% !important;
         left: 5% !important;
         top: 80px !important;
-        z-index: 200 !important;
+        z-index: 9000 !important;
         max-height: 70vh !important;
         overflow-y: auto !important;
     }
@@ -1837,23 +1847,4 @@ button[disabled] {
     0% { box-shadow: 0 0 6px rgba(255,180,50,0.35); transform: scale(1); }
     50% { box-shadow: 0 0 18px rgba(255,180,50,0.9); transform: scale(1.04); }
     100% { box-shadow: 0 0 6px rgba(255,180,50,0.35); transform: scale(1); }
-}
-
-/* Make mobile debug visible but non-intercepting: allow touches to pass
-   through the debug panel while keeping its internal control buttons clickable */
-#mobile-debug {
-    pointer-events: none !important;
-    z-index: 9999 !important;
-}
-#mobile-debug * {
-    pointer-events: none !important;
-}
-#mobile-debug button,
-#mobile-debug .debug-control,
-#mobile-debug .close-debug {
-    pointer-events: auto !important;
-    cursor: pointer !important;
-    position: relative;
-    z-index: 10000 !important;
-    touch-action: manipulation !important;
 }
