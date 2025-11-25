@@ -1868,6 +1868,8 @@ button[disabled] {
     /* allow panels to remain scrollable but manage footer visibility */
     display: block;
     max-height: 80vh;
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 /* Make the last direct child (usually the footer with close button) sticky at the bottom */
@@ -1888,6 +1890,7 @@ button[disabled] {
 #trading-post-panel #tp-inventory {
     overflow-y: auto;
     max-height: calc(80vh - 240px); /* leave room for header and footer */
+    padding-bottom: 96px; /* reserve space for sticky footer so last items are visible */
 }
 
 /* For equipment/blackmarket panels ensure inner list scrolls if present */
@@ -1896,4 +1899,13 @@ button[disabled] {
 #pyramid-choice-panel .panel-body {
     overflow-y: auto;
     max-height: calc(80vh - 180px);
+    padding-bottom: 96px;
+}
+
+/* Also ensure generic panel content areas have bottom padding so sticky footers don't cover content */
+#trading-post-panel .panel-body,
+#equipment-panel .panel-body,
+#blackmarket-panel .panel-body,
+#pyramid-choice-panel .panel-body {
+    padding-bottom: 96px;
 }
