@@ -111,6 +111,24 @@ const ITEMS = [
 	{ name: 'σ«êΦ¡╖Σ╣ïτ¼ª', slot: 'amulet', def: 3, rarity: 'common' }
 ];
 
+// 新增裝備項目（擴充裝備池）
+ITEMS.push(
+	// 武器 - 隨機稀有度
+	{ name: '太陽神之劍', slot: 'weapon', atk: 22, skill_power: 8, rarity: 'rare' },
+	{ name: '黃沙之裂斧', slot: 'weapon', atk: 28, crit_rate: 6, rarity: 'excellent' },
+	{ name: '星辰滅絕刃', slot: 'weapon', atk: 36, skill_power: 18, crit_rate: 10, rarity: 'epic' },
+
+	// 防具
+	{ name: '尼羅河甲', slot: 'armor', def: 18, max_hp_bonus: 40, rarity: 'rare' },
+	{ name: '赤陶重甲', slot: 'armor', def: 24, dodge_rate: 6, rarity: 'excellent' },
+	{ name: '王者守護衣', slot: 'armor', def: 32, max_hp_bonus: 80, rarity: 'epic' },
+
+	// 護符 / 飾品
+	{ name: '幸運祈願符+', slot: 'amulet', luck_gold: 4, rarity: 'rare' },
+	{ name: '戰鬥祝福墜飾', slot: 'amulet', luck_combat: 4, atk: 4, rarity: 'excellent' },
+	{ name: '傳說王者之眼', slot: 'amulet', luck_combat: 6, max_hp_bonus: 120, rarity: 'legendary' }
+);
+
 // σôüΦ│¬Θíìσñûσ▒¼µÇºµ▒á
 const QUALITY_BONUS = {
 	weapon: {
