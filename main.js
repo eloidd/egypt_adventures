@@ -555,8 +555,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	const reels = [document.getElementById('reel-0'), document.getElementById('reel-1'), document.getElementById('reel-2')];
 
 // 事件列表與權重（對應原 Python）
-const EVENTS = ['monster', 'elite', 'mini_boss', 'merchant', 'black_market', 'oasis', 'sandstorm', 'egyptian_god', 'pyramid', 'buried_treasure', 'dead_traveler', 'ancient_shrine', 'caravan_rest', 'mirage', 'nomad_camp', 'quicksand', 'scorpion_nest', 'ancient_ruins', 'mysterious_stranger', 'trading_post', 'empty'];
-const EVENT_WEIGHTS = [22,8,4,7,4,6,8,4,6,6,6,5,5,4,5,5,4,5,4,6,2];
+const EVENTS = ['monster', 'elite', 'mini_boss', 'merchant', 'black_market', 'oasis', 'sandstorm', 'egyptian_god', 'pyramid', 'buried_treasure', 'dead_traveler', 'ancient_shrine', 'caravan_rest', 'mirage', 'nomad_camp', 'quicksand', 'scorpion_nest', 'ancient_ruins', 'mysterious_stranger', 'trading_post', 'empty', 'lost_merchant', 'cursed_shrine', 'bandit_ambush', 'ancient_puzzle', 'desert_oasis'];
+const EVENT_WEIGHTS = [22,8,4,7,4,6,8,4,6,6,6,5,5,4,5,5,4,5,4,6,2,4,4,6,5,5];
 
 function chooseEvent() {
 	const total = EVENT_WEIGHTS.reduce((a,b)=>a+b,0);
@@ -2283,19 +2283,19 @@ function genEnemyName(type) {
 			this.player.hp = Math.max(1, this.player.hp - damage);
 			showMessage(`受到 ${damage} 點傷害！`);
 		} else {
-			showMessage('👹 遺跡的守護者被喚醒了！');
-			this.battle('elite');
-		}
-	}
-
-	mysteriousStranger() {
-		showMessage(t('strangerMet'));
-		const outcomes = [
-			{ type: 'gamble', weight: 30 },
-			{ type: 'gift', weight: 25 },
 			{ type: 'prophecy', weight: 20 },
 			{ type: 'curse', weight: 15 },
 			{ type: 'merchant', weight: 10 }
+		} else if (event === 'lost_merchant') {
+			this.lostMerchant();
+		} else if (event === 'cursed_shrine') {
+			this.cursedShrine();
+		} else if (event === 'bandit_ambush') {
+			this.banditAmbush();
+		} else if (event === 'ancient_puzzle') {
+			this.ancientPuzzle();
+		} else if (event === 'desert_oasis') {
+			this.desertOasis();
 		];
 		const total = outcomes.reduce((s, o) => s + o.weight, 0);
 		let r = Math.random() * total;
