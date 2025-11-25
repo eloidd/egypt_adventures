@@ -3416,7 +3416,6 @@ function startAutoSpinLoop() {
 			if (e.target.classList.contains('unequip-btn')) {
 				const slot = e.target.getAttribute('data-slot');
 				mobileDebug(`✓ 卸下按鈕 slot=${slot}`);
-				e.preventDefault();
 				e.stopPropagation();
 				if (slot) {
 					game.unequipItem(slot);
@@ -3427,7 +3426,6 @@ function startAutoSpinLoop() {
 			} else if (e.target.classList.contains('open-equip-btn')) {
 				const slot = e.target.getAttribute('data-slot');
 				mobileDebug(`✓ 裝備按鈕 slot=${slot}`);
-				e.preventDefault();
 				e.stopPropagation();
 				if (slot) {
 					game.showEquipmentPanel(slot);
