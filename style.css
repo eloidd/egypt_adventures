@@ -602,7 +602,7 @@ button[disabled] {
     border-right: 5px solid #654321;
     position: relative;
     z-index: 1;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .status-box-side .stat-label {
@@ -669,7 +669,7 @@ button[disabled] {
     margin-top: 8px;
     font-size: 0.9em;
     position: relative;
-    z-index: 100;
+    z-index: 10;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -695,9 +695,9 @@ button[disabled] {
     -webkit-tap-highlight-color: rgba(212, 168, 85, 0.3);
     user-select: none;
     -webkit-user-select: none;
-    pointer-events: auto;
+    pointer-events: auto !important;
     position: relative;
-    z-index: 101;
+    z-index: 20;
     min-height: 28px;
     min-width: 50px;
     transition: all 0.2s ease;
@@ -750,7 +750,7 @@ button[disabled] {
     -webkit-user-select: none;
     pointer-events: auto !important;
     position: relative;
-    z-index: 1500 !important;
+    z-index: 50 !important;
 }
 
 .open-equip-btn:hover,
@@ -1548,9 +1548,16 @@ button[disabled] {
         user-select: none;
         -webkit-user-select: none;
         position: relative;
-        z-index: 1000 !important;
         cursor: pointer !important;
         pointer-events: auto !important;
+    }
+    
+    /* 裝備按鈕特別處理 - 確保可點擊 */
+    .open-equip-btn,
+    .unequip-btn {
+        z-index: 100 !important;
+        pointer-events: auto !important;
+        touch-action: manipulation !important;
     }
     
     /* 確保獨立按鈕在手機版有正確設置 */
@@ -1560,7 +1567,7 @@ button[disabled] {
     #close-equip,
     #close-blackmarket {
         position: relative;
-        z-index: 1001 !important;
+        z-index: 90 !important;
         pointer-events: auto !important;
         touch-action: manipulation !important;
         cursor: pointer !important;
