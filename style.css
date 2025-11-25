@@ -1,3 +1,14 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+}
+
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     background: 
@@ -6,6 +17,8 @@ body {
     background-attachment: fixed;
     margin: 0;
     padding: 0;
+    width: 100%;
+    overflow-x: hidden;
     position: relative;
     min-height: 100vh;
 }
@@ -656,12 +669,12 @@ button[disabled] {
     margin-top: 8px;
     font-size: 0.9em;
     position: relative;
-    z-index: 10;
+    z-index: 100;
 }
 .equip-row > div {
     margin-bottom: 4px;
     position: relative;
-    z-index: 10;
+    z-index: 100;
 }
 .equip-row > div > div {
     pointer-events: none !important;
@@ -673,18 +686,20 @@ button[disabled] {
     margin-top: 2px;
     border: none;
     border-radius: 4px;
-    cursor: pointer !important;
+    cursor: pointer;
     background: #d4a855;
     color: white;
-    touch-action: manipulation !important;
+    touch-action: manipulation;
     -webkit-tap-highlight-color: rgba(212, 168, 85, 0.3);
     user-select: none;
     -webkit-user-select: none;
-    pointer-events: auto !important;
+    pointer-events: auto;
     position: relative;
-    z-index: 2000 !important;
+    z-index: 101;
     min-height: 28px;
     min-width: 50px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .equip-row button:hover {
     background: #b88f42;
@@ -1101,6 +1116,10 @@ button[disabled] {
     /* 整體容器調整 */
     body {
         font-size: 14px;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        width: 100%;
     }
     
     body::after {
@@ -1110,9 +1129,11 @@ button[disabled] {
     }
     
     #game-container {
-        margin: 10px auto;
+        margin: 0 auto;
         padding: 12px;
-        width: 96%;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
     
     /* 移除裝飾性元素以節省空間 */
