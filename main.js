@@ -1230,7 +1230,14 @@ function genEnemyName(type) {
 			'dead_traveler': [t('hintDeadTraveler'), t('hintAbandonedItems'), t('hintOldBackpack'), t('hintTragedy')],
 			'ancient_shrine': [t('hintShrine'), t('hintStatue'), t('hintHoly'), t('hintRune')],
 			'caravan_rest': [t('hintCaravanRest'), t('hintLaughter'), t('hintCampfire'), t('hintFood')],
-			'empty': [t('hintCalm'), t('hintNothing'), t('hintOnlyDesert'), t('hintPeaceful'), t('hintSilent')]
+			// 針對「空」事件使用具體描述文字（避免顯示『什麼都沒有』）
+			'empty': [
+				'前方只見無盡沙丘，風聲輕拂。',
+				'四周一片寧靜，遠處傳來微弱的風聲。',
+				'空曠的沙地，偶爾有鳥影掠過天空。',
+				'遠處地平線上有微弱光影，或許值得靠近查看。',
+				'沙面有稀疏腳印，顯示有人經過，但此處看似平靜。'
+			]
 		};
 		
 		const directionTexts = {
@@ -1247,7 +1254,24 @@ function genEnemyName(type) {
 			const eventPath = directions[dir];
 			const event = eventPath.main;
 			const hintPool = hints[event] || hints['empty'];
-			const hint = hintPool[Math.floor(Math.random() * hintPool.length)];
+			// 過濾掉可能會顯示為「什麼都沒有」的翻譯字串（例如 t('hintNothing')），
+			// 優先使用其他更有描述性的提示文字以改善玩家體驗。
+			const filteredPool = hintPool.filter(h => {
+				if (!h) return false;
+				const normalized = String(h).trim();
+				if (!normalized) return false;
+				// 避免直接字面匹配已知的空提示（中文）或翻譯 key 的輸出
+				if (normalized === t('hintNothing')) return false;
+				if (normalized === '什麼都沒有') return false;
+				return true;
+			});
+			// 若過濾後沒有任何可用提示，使用具體備援提示（中文句子）
+			const finalPool = (filteredPool.length > 0) ? filteredPool : [
+				'前方平靜無驚，只有沙與風。',
+				'這一帶看似空曠，但仍需保持警覺。',
+				'沙丘連綿，看似平凡的一段路程。'
+			];
+			const hint = finalPool[Math.floor(Math.random() * finalPool.length)];
 			
 			// 如果有支線，添加額外提示
 			let branchHint = '';
