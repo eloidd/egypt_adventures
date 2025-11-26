@@ -873,7 +873,7 @@ function genEnemyName(type) {
 		// 計算閃避機率
 		calculateDodgeChance(armorDodge) {
 			const dodgeChance = Math.min(0.5, 0.03 + 0.02 * this.player.luck_combat + armorDodge / 100); // 最多 50% 閃避
-			showMessage(`你閃避了敵人的自動普攻！(戰鬥幸運 ${this.player.luck_combat})`);
+			showMessage(`你閃避了敵人的自動攻擊！(戰鬥幸運 ${this.player.luck_combat})`);
 			// 成功閃避後消耗一些戰鬥幸運，避免永久累積
 			if (this.player.luck_combat && this.player.luck_combat > 0) {
 				this.player.luck_combat = Math.max(0, this.player.luck_combat - 1);
@@ -1584,7 +1584,7 @@ function genEnemyName(type) {
 			const mf = document.getElementById('move-front'); if (mf) mf.disabled = true;
 			const ml = document.getElementById('move-left'); if (ml) ml.disabled = true;
 			const mr = document.getElementById('move-right'); if (mr) mr.disabled = true;
-			// 根據類型調整敵人血量與普攻力
+			// 根據類型調整敵人血量與攻擊力
 			// 金字塔內敵人隨地圖難度增強：HP x(3+難度*0.5), ATK x(2.5+難度*0.3), 強度x(1.5+難度*0.2)
 			// 非金字塔：按使用者要求提升強度（strength +0.5）與血量加倍（HP x2）
 			let hpMultiplier = this.inPyramid ? (3.0 + this.difficulty * 0.5) : 2.0;
@@ -1655,7 +1655,7 @@ function genEnemyName(type) {
 			}
 		}
 
-		// 敵人自動普攻
+		// 敵人自動攻擊
 		enemyAutoAttack() {
 			// 計算基本攻擊並降低基礎傷害（較適合新手）
 			const raw = this.enemy.baseAttack; // baseAttack 已依難度調整
@@ -1666,7 +1666,7 @@ function genEnemyName(type) {
 			const armorDodge = this.player.equipment.armor ? (this.player.equipment.armor.dodge_rate || 0) : 0;
 			const dodgeChance = Math.min(0.5, 0.03 + 0.02 * this.player.luck_combat + armorDodge / 100); // 最多 50% 閃避
 			if (Math.random() < dodgeChance) {
-				showMessage(`你閃避了敵人的自動普攻！(戰鬥幸運 ${this.player.luck_combat})`);
+				showMessage(`你閃避了敵人的自動攻擊！(戰鬥幸運 ${this.player.luck_combat})`);
 				// 成功閃避後消耗一些戰鬥幸運，避免永久累積
 				if (this.player.luck_combat && this.player.luck_combat > 0) {
 					this.player.luck_combat = Math.max(0, this.player.luck_combat - 1);
@@ -1677,7 +1677,7 @@ function genEnemyName(type) {
 				const mitigated = Math.max(0, dmg - this.player.shield);
 				this.player.shield -= consumedShield;
 				this.player.hp -= mitigated;
-				showMessage(`敵人自動普攻，造成 ${dmg} 傷害（護盾吸收 ${consumedShield}），玩家 HP -${mitigated}。`);
+				showMessage(`敵人自動攻擊，造成 ${dmg} 傷害（護盾吸收 ${consumedShield}），玩家 HP -${mitigated}。`);
 			}
 			// 重置攻擊倒數
 			this.enemy.turnsToAttack = 3;
@@ -2838,7 +2838,7 @@ function genEnemyName(type) {
 					// 敵人回合倒數（若敵人尚未死亡）
 					this.enemy.turnsToAttack -= 1;
 					if (this.enemy.turnsToAttack <= 0 && this.enemy.hp > 0) {
-						// 延遲觸發敵人普攻，讓插槽效果與訊息先完整呈現
+						// 延遲觸發敵人攻擊，讓插槽效果與訊息先完整呈現
 						setTimeout(() => {
 							// 檢查戰鬥仍在進行且敵人未死亡
 							if (this.inBattle && this.enemy.hp > 0) this.enemyAutoAttack();
