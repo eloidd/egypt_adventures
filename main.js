@@ -3285,6 +3285,8 @@ function genEnemyName(type) {
 								this.player.gold += gold;
 								showMessage(`💰 野獸逃跑時掉落了 ${gold} 金幣！`);
 							}
+							this.updateStatus();
+							this.generateDirectionHints();
 						} else {
 							this.player.stamina -= staminaCost;
 							showMessage(`😰 嚇唬失敗！野獸更加憤怒了！（消耗 ${staminaCost} 體力）`);
@@ -3310,16 +3312,15 @@ function genEnemyName(type) {
 							this.player.gold += gold;
 							showMessage(`💰 野獸離開時留下了 ${gold} 金幣。`);
 						}
-						const xp = 40;
-						this.addXP(xp);
-					}
-				}
-				this.updateStatus();
-			}
-		);
-	}
-
-	moonlightAltar() {
+                        const xp = 40;
+                        this.addXP(xp);
+                        this.updateStatus();
+                        this.generateDirectionHints();
+                    }
+                }
+            }
+        );
+    }	moonlightAltar() {
 		showMessage('🌙 在月光下，你發現了一座神秘的祭壇...');
 		const choices = [
 			{ id: 'pray', label: '虔誠祈禱（可能獲得祝福）', weight: 35 },
@@ -3438,6 +3439,8 @@ function genEnemyName(type) {
 						this.player.potions += potions;
 						showMessage(`🧪 還找到了 ${potions} 瓶藥水！`);
 					}
+					this.updateStatus();
+					this.generateDirectionHints();
 				} else if (choiceId === 'quick_loot') {
 					showMessage('💨 你快速搜刮了一遍...');
 					const quickRoll = Math.random();
@@ -3450,6 +3453,8 @@ function genEnemyName(type) {
 							this.player.inventory.push(item);
 							showMessage(`⚔️ 還找到了 ${this.formatItem(item)}。`);
 						}
+						this.updateStatus();
+						this.generateDirectionHints();
 					} else if (quickRoll < 0.8) {
 						showMessage('💥 你觸發了殘留的陷阱！');
 						const damage = 20 + Math.floor(Math.random() * 15);
@@ -3458,6 +3463,8 @@ function genEnemyName(type) {
 						const gold = 30 + Math.floor(Math.random() * 40);
 						this.player.gold += gold;
 						showMessage(`💰 匆忙中你還是撿到了 ${gold} 金幣。`);
+						this.updateStatus();
+						this.generateDirectionHints();
 					} else {
 						showMessage('⚠️ 其他掠奪者也盯上了這裡！');
 						this.battle('monster');
@@ -3476,6 +3483,8 @@ function genEnemyName(type) {
 						const xp = 80 + Math.floor(Math.random() * 40);
 						this.addXP(xp);
 						showMessage('😌 救人一命讓你心情愉悅。');
+						this.updateStatus();
+						this.generateDirectionHints();
 					} else if (survivorRoll < 0.7) {
 						showMessage('😔 所有人都已經罹難了...');
 						showMessage('📖 你找到了商隊隊長的日記。');
@@ -3485,13 +3494,14 @@ function genEnemyName(type) {
 						const gold = 60 + Math.floor(Math.random() * 60);
 						this.player.gold += gold;
 						showMessage(`💰 你找到了他們的共同基金 ${gold} 金幣。`);
+						this.updateStatus();
+						this.generateDirectionHints();
 					} else {
 						showMessage('😨 「倖存者」突然站起來攻擊你！');
 						showMessage('原來是盜賊的陷阱！');
 						this.battle('elite');
 					}
 				}
-				this.updateStatus();
 			}
 		);
 	}
