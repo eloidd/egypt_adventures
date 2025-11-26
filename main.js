@@ -517,6 +517,12 @@ document.addEventListener('DOMContentLoaded', function() {
 	const button = document.getElementById('submit-btn');
 	const spinBtn = document.getElementById('spin-btn');
 	const stopBtn = document.getElementById('stop-btn');
+
+	// 讀取並暴露版本號（從 index.html 的 #version-display）
+	const _versionEl = document.getElementById('version-display');
+	const APP_VERSION = _versionEl ? _versionEl.textContent.trim() : 'Version 1.0.0';
+	window.APP_VERSION = APP_VERSION; // 全域可取用
+	console.log('App Version:', APP_VERSION);
 	
 	// 初始化音樂系統
 	MusicSystem.init();
