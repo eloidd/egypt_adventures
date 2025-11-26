@@ -1232,11 +1232,11 @@ function genEnemyName(type) {
 			'caravan_rest': [t('hintCaravanRest'), t('hintLaughter'), t('hintCampfire'), t('hintFood')],
 			// 針對「空」事件使用具體描述文字（避免顯示『什麼都沒有』）
 			'empty': [
-				'前方只見無盡沙丘，風聲輕拂。',
-				'四周一片寧靜，遠處傳來微弱的風聲。',
-				'空曠的沙地，偶爾有鳥影掠過天空。',
-				'遠處地平線上有微弱光影，或許值得靠近查看。',
-				'沙面有稀疏腳印，顯示有人經過，但此處看似平靜。'
+				t('hintEmpty1'),
+				t('hintEmpty2'),
+				t('hintEmpty3'),
+				t('hintEmpty4'),
+				t('hintEmpty5')
 			]
 		};
 		
@@ -1267,9 +1267,9 @@ function genEnemyName(type) {
 			});
 			// 若過濾後沒有任何可用提示，使用具體備援提示（中文句子）
 			const finalPool = (filteredPool.length > 0) ? filteredPool : [
-				'前方平靜無驚，只有沙與風。',
-				'這一帶看似空曠，但仍需保持警覺。',
-				'沙丘連綿，看似平凡的一段路程。'
+				t('hintEmptyFallback1'),
+				t('hintEmptyFallback2'),
+				t('hintEmptyFallback3')
 			];
 			const hint = finalPool[Math.floor(Math.random() * finalPool.length)];
 			
