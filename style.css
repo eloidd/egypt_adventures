@@ -1119,7 +1119,7 @@ button[disabled] {
     /* 確保面板在平板也有正確的 z-index */
     #equipment-panel,
     #blackmarket-panel {
-        z-index: 9000 !important;
+        z-index: 10000 !important;
     }
     
     /* 確保獨立按鈕在平板版有正確設置 */
@@ -1508,7 +1508,7 @@ button[disabled] {
         left: 5% !important;
         right: 5% !important;
         top: 80px !important;
-        z-index: 9000 !important;
+        z-index: 10000 !important;
         max-height: 70vh !important;
         overflow-y: auto !important;
     }
@@ -1518,7 +1518,7 @@ button[disabled] {
         width: 90% !important;
         left: 5% !important;
         top: 80px !important;
-        z-index: 9000 !important;
+        z-index: 10000 !important;
         max-height: 70vh !important;
         overflow-y: auto !important;
     }
@@ -1799,7 +1799,7 @@ button[disabled] {
     /* 確保面板在極小螢幕也有正確的 z-index */
     #equipment-panel,
     #blackmarket-panel {
-        z-index: 200 !important;
+        z-index: 10000 !important;
     }
     
     /* 確保獨立按鈕在極小螢幕有正確設置 */
