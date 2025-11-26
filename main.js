@@ -3511,12 +3511,16 @@ function startAutoSpinLoop() {
 	}
 
 		// 使用事件委派處理裝備按鈕，避免重複綁定
+		// Use bubbling-phase handler and avoid calling preventDefault()
+		// to ensure native touch/scroll behavior on mobile is not blocked.
 		document.addEventListener('click', function(e) {
 			const button = e.target.closest('.unequip-btn, .open-equip-btn');
 
 			if (button) {
+				// stopPropagation is enough to isolate the click handling
+				// for these buttons; do NOT call preventDefault here as it
+				// can interfere with touch interactions on mobile browsers.
 				e.stopPropagation();
-				e.preventDefault();
 
 				const slot = button.getAttribute('data-slot');
 
@@ -3530,7 +3534,7 @@ function startAutoSpinLoop() {
 					}
 				}
 			}
-		}, true);
+		}, false);
 
 	// 自動旋轉與逃跑按鈕綁定
 	const autoBtn = document.getElementById('auto-spin-btn');
