@@ -562,7 +562,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 事件列表與權重（對應原 Python）
 const EVENTS = ['monster', 'elite', 'mini_boss', 'merchant', 'black_market', 'oasis', 'sandstorm', 'egyptian_god', 'pyramid', 'buried_treasure', 'dead_traveler', 'ancient_shrine', 'caravan_rest', 'mirage', 'nomad_camp', 'quicksand', 'scorpion_nest', 'ancient_ruins', 'mysterious_stranger', 'trading_post', 'empty', 'lost_merchant', 'cursed_shrine', 'bandit_ambush', 'ancient_puzzle', 'desert_oasis', 'sandstorm_shelter', 'wandering_alchemist', 'ancient_tablet', 'beast_pack', 'moonlight_altar', 'caravan_wreckage'];
-const EVENT_WEIGHTS = [22,8,4,7,4,6,8,4,6,6,6,5,5,4,5,5,4,5,4,6,2,4,4,6,5,5,5,5,4,6,4,5];
+const EVENT_WEIGHTS = [22,8,4,7,4,6,8,4,6,6,6,5,8,4,5,5,4,5,4,6,2,4,4,6,5,5,5,5,4,6,4,5];
 
 function chooseEvent() {
 	const total = EVENT_WEIGHTS.reduce((a,b)=>a+b,0);
@@ -795,6 +795,8 @@ function genEnemyName(type) {
 			this.pyramidSteps = 0;
 			this.pyramidMaxSteps = 8;
 			this.normalMapSteps = 0; // 儲存進入金字塔前的步數
+			// 驛站追蹤：確保每張地圖至少出現一次
+			this.hasEncounteredCaravanRest = false;
 		}
 
 		// 檢測套裝效果（需要武器+護甲+護符三件相同字綴且同品質）
@@ -1215,6 +1217,24 @@ function genEnemyName(type) {
 			'右': this.generateBranchPath()
 		};
 		
+		// 驛站保證機制：確保每張地圖至少出現一次驛站
+		if (!this.inPyramid && !this.hasEncounteredCaravanRest) {
+			const progressRatio = this.map_steps / this.map_goal;
+			const dirKeys = Object.keys(directions);
+			
+			// 如果地圖進度超過60%還沒遇到驛站，強制其中一個方向出現驛站
+			if (progressRatio >= 0.6) {
+				const targetDir = dirKeys[Math.floor(Math.random() * dirKeys.length)];
+				directions[targetDir].main = 'caravan_rest';
+				directions[targetDir].branches = [];
+				showMessage('🏪 你感覺前方不遠處有驛站的氣息...');
+			} else if (progressRatio >= 0.3 && Math.random() < 0.4) {
+				// 地圖進度30%後，有40%機率在某個方向出現驛站
+				const targetDir = dirKeys[Math.floor(Math.random() * dirKeys.length)];
+				directions[targetDir].main = 'caravan_rest';
+			}
+		}
+		
 		// 強盜情報效果：提高好事件機率
 		if (this.player.banditInfo && this.player.banditInfo > 0) {
 			const goodEvents = ['merchant', 'oasis', 'buried_treasure', 'ancient_shrine', 'caravan_rest', 'trading_post', 'desert_oasis'];
@@ -1585,15 +1605,15 @@ function genEnemyName(type) {
 			return 'monster';
 		}
 
-		nextMap() {
-			showMessage(t('desertCleared'));
-			this.map_steps = 0;
-			this.difficulty += 1;
-			this.map_goal += 5;
-			this.updateStatus();
-		}
-
-		handleEvent(event) {
+	nextMap() {
+		showMessage(t('desertCleared'));
+		this.map_steps = 0;
+		this.difficulty += 1;
+		this.map_goal += 5;
+		// 重置驛站追蹤，確保新地圖會出現驛站
+		this.hasEncounteredCaravanRest = false;
+		this.updateStatus();
+	}		handleEvent(event) {
 			if (event === 'monster' || event === 'elite' || event === 'mini_boss') {
 				this.battle(event);
 			} else if (event === 'merchant') {
@@ -1615,6 +1635,7 @@ function genEnemyName(type) {
 			} else if (event === 'ancient_shrine') {
 				this.ancientShrine();
 			} else if (event === 'caravan_rest') {
+				this.hasEncounteredCaravanRest = true;
 				this.caravanRest();
 			} else if (event === 'mirage') {
 				this.mirage();
@@ -4615,6 +4636,7 @@ function startAutoSpinLoop() {
 				pyramidSteps: game.pyramidSteps,
 				pyramidMaxSteps: game.pyramidMaxSteps,
 				normalMapSteps: game.normalMapSteps,
+				hasEncounteredCaravanRest: game.hasEncounteredCaravanRest,
 				timestamp: Date.now()
 			};
 			const saveString = JSON.stringify(saveData);
@@ -4659,6 +4681,7 @@ function startAutoSpinLoop() {
 			game.pyramidSteps = data.pyramidSteps || 0;
 			game.pyramidMaxSteps = data.pyramidMaxSteps || 8;
 			game.normalMapSteps = data.normalMapSteps || 0;
+			game.hasEncounteredCaravanRest = data.hasEncounteredCaravanRest || false;
 			
 			// 更新UI狀態
 			if (game.inBattle) {
